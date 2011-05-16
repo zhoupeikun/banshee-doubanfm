@@ -1,0 +1,16 @@
+<ui>
+	<menubar name="MainMenu">
+	<menu name="ToolsMenu" action="ToolsMenuAction">
+		<menu name="DoubanFM" action="DoubanFMAction">
+			<menuitem name="DoubanFMConfigure" action="DoubanFMConfigureAction" />
+		</menu>
+	</menu>
+	</menubar>
+	
+    <toolbar name="HeaderToolbar">
+        <placeholder name="SourceActions">
+            <toolitem name="DoubanFMFav" action="DoubanFMFavAction"/>
+            <toolitem name="DoubanFMHate" action="DoubanFMHateAction"/>
+        </placeholder>
+    </toolbar>
+</ui>
