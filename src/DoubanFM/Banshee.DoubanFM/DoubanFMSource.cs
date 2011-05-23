@@ -82,23 +82,11 @@ namespace Banshee.DoubanFM
             Pixbuf icon = new Pixbuf (System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("doubanfm.png"));
             Properties.Set<Pixbuf> ("Icon.Pixbuf_16", icon.ScaleSimple (16, 16, InterpType.Bilinear));
 
-
-//            actions = new ActionGroup("DoubanFM");
-//            actions.Add(new ActionEntry[] {
-//                new ActionEntry ("DoubanFMAction", null, "_DoubanFM", null, "Configure DoubanFM", null),
-//                new ActionEntry ("DoubanFMConfigureAction", Stock.Properties, "_Configure", null, "Configure DoubanFM", OnConfigurePlugin)
-//            });
-//            action_service = ServiceManager.Get<InterfaceActionService> ();
-//            action_service.UIManager.InsertActionGroup(actions, 0);
-//            ui_manager_id = action_service.UIManager.AddUiFromString(menu_string);
-
             // actions
             actions = new DoubanFMActions(this);
 
             trackListModel = new MemoryTrackListModel();
             ServiceManager.SourceManager.AddSource(this);
-
-            Hyena.Log.Information ("Testing!  DoubanFM source has been instantiated!");
         }
 
         public Dictionary<string, DoubanFMChannel> GetChannels ()
@@ -126,7 +114,7 @@ namespace Banshee.DoubanFM
 
                     ServiceManager.PlaybackController.NextSource = this;
                     ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
-                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
+//                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
                     ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
                 }
                 catch (DoubanLoginException e) {
@@ -161,7 +149,6 @@ namespace Banshee.DoubanFM
 
         private void StartSong (PlayerEventArgs args) {
             Hyena.Log.Information("Start of stream.");
-//            fm.PlayedSong(fm.Current.sid, fm.Current.aid);
         }
 
         private void FinishSong (PlayerEventArgs args) {
@@ -199,8 +186,9 @@ namespace Banshee.DoubanFM
         #endregion
 
         #region ITrackModelSource implementation
-        public void Reload ()
-        {}
+        public void Reload () {
+            trackListModel.Reload();
+        }
 
         public TrackListModel TrackModel { get { return trackListModel; } }
 
@@ -235,6 +223,7 @@ namespace Banshee.DoubanFM
         {
             actions.Dispose();
             actions = null;
+            ServiceManager.PlayerEngine.DisconnectEvent(Next);
         }
 
 

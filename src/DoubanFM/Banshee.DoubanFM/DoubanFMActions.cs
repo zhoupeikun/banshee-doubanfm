@@ -55,20 +55,31 @@ namespace Banshee.DoubanFM
                     Catalog.GetString ("Mark current track as loved"), OnLoved),
 
                 new ActionEntry (
+                    "DoubanFMUnfavAction", null,
+                    Catalog.GetString ("Cancel Love Track"), null,
+                    Catalog.GetString ("Cancel marking track as loved"), OnCancelLoved),
+
+                new ActionEntry (
                     "DoubanFMHateAction", null,
                     Catalog.GetString ("Ban Track"), null,
                     Catalog.GetString ("Mark current track as banned"), OnHated)
             });
 
             this["DoubanFMFavAction"].IconName = "face-smile";
+            this["DoubanFMUnfavAction"].IconName = "face-smile";
             this["DoubanFMHateAction"].IconName = "face-sad";
 
             this["DoubanFMFavAction"].IsImportant = true;
+            this["DoubanFMUnfavAction"].IsImportant = true;
             this["DoubanFMHateAction"].IsImportant = true;
 
             Add(new ActionEntry[] {
-                new ActionEntry ("DoubanFMAction", null, "_DoubanFM", null, "Configure DoubanFM", null),
-                new ActionEntry ("DoubanFMConfigureAction", Stock.Properties, "_Configure", null, "Configure DoubanFM", OnConfigurePlugin)
+                new ActionEntry ("DoubanFMAction", null,
+                                 Catalog.GetString ("_DoubanFM"), null,
+                                 Catalog.GetString ("Configure DoubanFM"), null),
+                new ActionEntry ("DoubanFMConfigureAction", Stock.Properties,
+                                 Catalog.GetString ("_Configure"), null,
+                                 Catalog.GetString ("Configure DoubanFM"), OnConfigurePlugin)
             });
 
             actions_id = Actions.UIManager.AddUiFromResource ("UI.xml");
@@ -107,6 +118,19 @@ namespace Banshee.DoubanFM
             if (song == null)
                 return;
             fmSource.fm.playList = fmSource.fm.FavSong(song.sid, song.aid);
+            song.like = true;
+            UpdateActions();
+        }
+
+        private void OnCancelLoved (object sender, EventArgs args)
+        {
+            Hyena.Log.Information("Cancel loving a track.");
+            DoubanFMSong song = ServiceManager.PlayerEngine.CurrentTrack as DoubanFMSong;
+            if (song == null)
+                return;
+            fmSource.fm.playList = fmSource.fm.UnfavSong(song.sid, song.aid);
+            song.like = false;
+            UpdateActions();
         }
 
         private void OnHated (object sender, EventArgs args)
@@ -142,14 +166,14 @@ namespace Banshee.DoubanFM
             }
 
             TrackInfo current_track = ServiceManager.PlayerEngine.CurrentTrack;
-            this["DoubanFMFavAction"].Visible = current_track is DoubanFMSong;
-            this["DoubanFMHateAction"].Visible = current_track is DoubanFMSong;
+            this["DoubanFMFavAction"].Visible = (current_track is DoubanFMSong) && !((DoubanFMSong)current_track).like;
+            this["DoubanFMUnfavAction"].Visible = (current_track is DoubanFMSong) && ((DoubanFMSong)current_track).like;
+            // only personal channel has hate action
+            this["DoubanFMHateAction"].Visible = (current_track is DoubanFMSong) && (fmSource.fm.channel == 0);
 
             updating = false;
         }
 
-//        private uint track_actions_id;
-//        private bool was_doubanfm = false;
         private void OnPlaybackSourceChanged (object o, EventArgs args)
         {
             if (Actions == null || Actions.PlaybackActions == null || ServiceManager.PlaybackController == null)

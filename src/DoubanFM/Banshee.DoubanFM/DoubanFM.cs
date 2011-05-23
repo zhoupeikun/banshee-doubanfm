@@ -120,6 +120,9 @@ namespace Banshee.DoubanFM
 
             InitializeHandler asyncInitializeHandler = Initialize;
             asyncInitializeHandler.BeginInvoke(IntializeCallback, null);
+
+            // connect events
+            DoubanFMSong.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
         }
 
         public void Initialize() {
@@ -253,9 +256,9 @@ namespace Banshee.DoubanFM
             JsonObject obj = (JsonObject)deserializer.Deserialize();
             JsonArray arr = (JsonArray)obj["channels"];
             foreach (JsonObject c in arr) {
-                this.Channels.Add((string)c["name_en"], new DoubanFMChannel((string)c["name_en"], ((int)c["channel_id"]).ToString()));
-//                Hyena.Log.Information("Channels: " + string.Join(",", Channels.Keys.ToArray()));
+                this.Channels.Add((string)c["name"], new DoubanFMChannel((string)c["name"], ((int)c["channel_id"]).ToString(), (string)c["name_en"]));
             }
+            Hyena.Log.Debug("Channels: " + string.Join(",", Channels.Keys.ToArray()));
         }
 
 
@@ -399,6 +402,8 @@ namespace Banshee.DoubanFM
 
         #endregion
 
+//        public DoubanFMSong Previous { get; set; }
+
         #region IO With douban.fm
 
 
@@ -471,6 +476,19 @@ namespace Banshee.DoubanFM
             return JsonToDoubanFMSongs(results);
         }
 
+        void HandleDoubanFMSongPlaybackFinished (TrackInfo track, double percentCompleted) {
+            var song = track as DoubanFMSong;
+            Hyena.Log.Information("HandleDoubanFMSongPlaybackFinished: percentCompleted=" + percentCompleted.ToString());
+//            if ((percentCompleted > 0.9) && (track.PlayCount > 0)) {
+            if (percentCompleted > 0.9) {
+                Hyena.Log.Information("Finished playing a song: " + song.TrackTitle);
+                PlayedSong(song.sid, song.aid);
+            } else {
+                Hyena.Log.Information("Skipped a song: " + song.TrackTitle);
+                 SkipSong(song.sid, song.aid);
+            }
+        }
+
         /// <summary>
         /// tell douban that you have finished a song
         /// </summary>
@@ -488,6 +506,25 @@ namespace Banshee.DoubanFM
 
         public void PlayedSong(string sid, string aid) {
             PlayedSong(sid, aid, 0);
+        }
+
+        /// <summary>
+        /// tell douban that you have skipped a song
+        /// </summary>
+        /// <param name="history">
+        /// playlist history <see cref="List<DoubanFMSong>"/>
+        /// </param>
+        public void SkipSong(string sid, string aid, List<DoubanFMSong> history) {
+            var _params = GetDefaultParams("s");
+            _params["sid"] = sid;
+            _params["aid"] = aid;
+//            _params["h"] = FormatList<string>(history.GetRange(history.Count-50-1, 50).Select(s => s.sid).ToList());
+
+            RemoteFM(_params);
+        }
+
+        public void SkipSong(string sid, string aid) {
+            SkipSong(sid, aid, Enumerable.Empty<DoubanFMSong>().ToList());
         }
 
         /// <summary>

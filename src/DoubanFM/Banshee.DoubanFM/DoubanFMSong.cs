@@ -40,6 +40,7 @@ namespace Banshee.DoubanFM
         public string picture;
         public override TimeSpan Duration { get; set; }
         public bool like { get; set; }
+        public bool finished { get; set; }
 
         public override SafeUri Uri {
             get;
@@ -65,12 +66,23 @@ namespace Banshee.DoubanFM
                 picture = Lookup<string>(o, "picture", "");
                 like = Lookup<string>(o, "like", "0") == "0" ? false : true;
                 Duration = new TimeSpan(0, 0, Lookup<int>(o, "length", 0));
+                Hyena.Log.Information(Duration.ToString());
                 this.Uri = new SafeUri((string)o["url"]);
+
+                finished = false;
+                MediaAttributes = TrackMediaAttributes.AudioStream | TrackMediaAttributes.Music;
+                CanSaveToDatabase = false;
             }
             catch (Exception e) {
                 Hyena.Log.Exception(e);
                 throw new DoubanInvalidDataException(e.Message);
             }
+        }
+
+        public override void OnPlaybackFinished (double percentCompleted)
+        {
+            base.OnPlaybackFinished (percentCompleted);
+            Hyena.Log.Information("OnPlaybackFinished: " + TrackTitle);
         }
     }
 }

@@ -10,6 +10,7 @@
     <toolbar name="HeaderToolbar">
         <placeholder name="SourceActions">
             <toolitem name="DoubanFMFav" action="DoubanFMFavAction"/>
+            <toolitem name="DoubanFMUnfav" action="DoubanFMUnfavAction"/>
             <toolitem name="DoubanFMHate" action="DoubanFMHateAction"/>
         </placeholder>
     </toolbar>

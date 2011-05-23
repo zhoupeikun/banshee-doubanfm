@@ -38,13 +38,11 @@ namespace Banshee.DoubanFM
     {
         private Label title;
         private TileView tile_view;
-//        private static readonly Color active_color = new Color(0xd0, 0xd0, 0xd0);
-
-//        private Dictionary<string, Channel> channel_map;
+        private static readonly Color active_color = new Color(0xff, 0x00, 0x00);
+        private MenuTile active_tile;
 
         public TitledList (string title_str) : base()
         {
-//            channel_map = new Dictionary<string, Channel> ();
             title = new Label ();
             title.Xalign = 0;
             title.Ellipsize = Pango.EllipsizeMode.End;
@@ -83,7 +81,7 @@ namespace Banshee.DoubanFM
                 foreach (KeyValuePair<string, DoubanFMChannel> p in channels) {
                     MenuTile tile =  new MenuTile();
                     tile.PrimaryText = p.Key;
-                    tile.SecondaryText = p.Value.name;
+                    tile.SecondaryText = p.Value.englishName;
                     tile.ButtonPressEvent += PlayChannel;
                     tile_view.AddWidget(tile);
                 }
@@ -101,12 +99,15 @@ namespace Banshee.DoubanFM
 
         private void PlayChannel (object sender, ButtonPressEventArgs args)
         {
+            if (active_tile != null) {
+                // reset color
+                active_tile.ModifyText(StateType.Normal);
+            }
             MenuTile tile = sender as MenuTile;
-
-            Hyena.Log.Information(string.Format ("Tuning Douban FM to {0}", tile.PrimaryText), null);
+            Hyena.Log.Debug(string.Format ("Tuning Douban FM to {0}", tile.PrimaryText), null);
             ChangeChannelEvent(tile.PrimaryText);
-
-//            tile.ModifyFg(Gtk.StateType.Normal, active_color);
+            tile.ModifyText(Gtk.StateType.Normal, active_color);
+            active_tile = tile;
         }
     }
 }

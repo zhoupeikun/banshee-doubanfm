@@ -33,9 +33,15 @@ namespace Banshee.DoubanFM
             get; set;
         }
 
-        public DoubanFMChannel (string name, string id) {
+        public string englishName {
+            get;
+            set;
+        }
+
+        public DoubanFMChannel (string name, string id, string englishName) {
             this.name = name;
             this.id = id;
+            this.englishName = englishName;
         }
     }
 }
