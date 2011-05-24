@@ -11,7 +11,7 @@
     url="http://banshee-project.org/"
     defaultEnabled="false">
 
-  <Localizer type="Gettext" catalog="banshee-community-extensions" location="../../../share/locale"/>
+  <Localizer type="Gettext" catalog="banshee-extension-doubanfm" location="../../../share/locale"/>
 
   <Dependencies>
     <Addin id="Banshee.Services" version="1.0"/>

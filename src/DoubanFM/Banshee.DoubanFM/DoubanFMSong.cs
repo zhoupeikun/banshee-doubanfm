@@ -66,7 +66,6 @@ namespace Banshee.DoubanFM
                 picture = Lookup<string>(o, "picture", "");
                 like = Lookup<string>(o, "like", "0") == "0" ? false : true;
                 Duration = new TimeSpan(0, 0, Lookup<int>(o, "length", 0));
-                Hyena.Log.Information(Duration.ToString());
                 this.Uri = new SafeUri((string)o["url"]);
 
                 finished = false;

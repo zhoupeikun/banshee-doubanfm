@@ -122,7 +122,8 @@ namespace Banshee.DoubanFM
             asyncInitializeHandler.BeginInvoke(IntializeCallback, null);
 
             // connect events
-            DoubanFMSong.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
+//            TrackInfo.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
+            ConnectPlaybackFinished();
         }
 
         public void Initialize() {
@@ -134,6 +135,13 @@ namespace Banshee.DoubanFM
             loadChannelsThread.Join();
         }
 
+        public void ConnectPlaybackFinished() {
+            TrackInfo.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
+        }
+
+        public void DisconnectPlaybackFinished() {
+            TrackInfo.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
+        }
 
         /// <summary>
         /// workaround for invalid certificate problem
@@ -477,6 +485,9 @@ namespace Banshee.DoubanFM
         }
 
         void HandleDoubanFMSongPlaybackFinished (TrackInfo track, double percentCompleted) {
+            if (track == null)
+                return;
+
             var song = track as DoubanFMSong;
             Hyena.Log.Information("HandleDoubanFMSongPlaybackFinished: percentCompleted=" + percentCompleted.ToString());
 //            if ((percentCompleted > 0.9) && (track.PlayCount > 0)) {

@@ -81,7 +81,7 @@ namespace Banshee.DoubanFM
             main_box.PackStart (logo, false, false, 0);
 
 //            channels = new TitledList (Catalog.GetString ("Channels"));
-            channels = new TitledList ("Channels");
+            channels = new TitledList (Catalog.GetString("Channels"));
             main_box.PackStart (channels, false, false, 0);
 
             AddWithFrame (viewport);

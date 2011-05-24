@@ -31,6 +31,7 @@ using Gtk;
 using Gdk;
 using System;
 using System.Collections.Generic;
+using Mono.Unix;
 
 namespace Banshee.DoubanFM
 {
@@ -73,8 +74,8 @@ namespace Banshee.DoubanFM
 
             if (channels.Count == 0) {
                 MenuTile tile = new MenuTile();
-                tile.PrimaryText = "Loading channels";
-                tile.SecondaryText = "Please wait...";
+                tile.PrimaryText = Catalog.GetString("Loading channels");
+                tile.SecondaryText = Catalog.GetString("Please wait...");
                 tile_view.AddWidget(tile);
             }
             else {

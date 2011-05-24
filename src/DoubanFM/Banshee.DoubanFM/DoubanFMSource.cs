@@ -32,6 +32,7 @@ using System.Text;
 using System.Linq;
 
 using Mono.Addins;
+using Mono.Unix;
 
 using Banshee.Base;
 using Banshee.Sources;
@@ -82,6 +83,11 @@ namespace Banshee.DoubanFM
             Pixbuf icon = new Pixbuf (System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("doubanfm.png"));
             Properties.Set<Pixbuf> ("Icon.Pixbuf_16", icon.ScaleSimple (16, 16, InterpType.Bilinear));
 
+            // initialize gettext
+            Catalog.Init ("banshee-extension-doubanfm", System.IO.Path.Combine (
+                Hyena.Paths.InstalledApplicationDataRoot, "locale"));
+
+
             // actions
             actions = new DoubanFMActions(this);
 
@@ -115,12 +121,19 @@ namespace Banshee.DoubanFM
                     ServiceManager.PlaybackController.NextSource = this;
                     ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
 //                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
-                    ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
+//                    ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
                 }
                 catch (DoubanLoginException e) {
                     Hyena.Log.Error("Douban FM login error: " + e.Message);
                 }
             }
+        }
+
+        public override void Deactivate ()
+        {
+            if (this.fm == null)
+               return;
+            this.fm.DisconnectPlaybackFinished();
         }
 
         public void ChangeChannel(DoubanFMChannel channel) {
