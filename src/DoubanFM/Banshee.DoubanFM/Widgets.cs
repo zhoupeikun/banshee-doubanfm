@@ -41,6 +41,7 @@ namespace Banshee.DoubanFM
         private TileView tile_view;
         private static readonly Color active_color = new Color(0xff, 0x00, 0x00);
         private MenuTile active_tile;
+        private List<MenuTile> tiles;
 
         public TitledList (string title_str) : base()
         {
@@ -69,23 +70,33 @@ namespace Banshee.DoubanFM
 
         public void SetList (Dictionary<string, DoubanFMChannel> channels)
         {
-            tile_view.ClearWidgets ();
-            Hyena.Log.Information("Number of channels: " + channels.Count.ToString());
+            Hyena.Log.Debug("Number of channels: " + channels.Count.ToString());
 
             if (channels.Count == 0) {
+                tile_view.ClearWidgets ();
                 MenuTile tile = new MenuTile();
                 tile.PrimaryText = Catalog.GetString("Loading channels");
                 tile.SecondaryText = Catalog.GetString("Please wait...");
                 tile_view.AddWidget(tile);
             }
             else {
-                foreach (KeyValuePair<string, DoubanFMChannel> p in channels) {
-                    MenuTile tile =  new MenuTile();
-                    tile.PrimaryText = p.Key;
-                    tile.SecondaryText = p.Value.englishName;
-                    tile.ButtonPressEvent += PlayChannel;
-                    tile_view.AddWidget(tile);
+                if (tiles == null) {
+                    tile_view.ClearWidgets ();
+                    tiles = new List<MenuTile>();
+                    foreach (KeyValuePair<string, DoubanFMChannel> p in channels) {
+                        MenuTile tile =  new MenuTile();
+                        tile.PrimaryText = p.Key;
+                        tile.SecondaryText = p.Value.englishName;
+                        tile.ButtonPressEvent += PlayChannel;
+                        tile_view.AddWidget(tile);
+                        tiles.Add(tile);
+                    }
                 }
+//                else {
+//                    foreach (MenuTile tile in tiles) {
+//                        tile_view.AddWidget(tile);
+//                    }
+//                }
             }
 
             tile_view.ShowAll ();

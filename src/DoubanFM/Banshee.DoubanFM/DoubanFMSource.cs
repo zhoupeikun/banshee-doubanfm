@@ -139,7 +139,8 @@ namespace Banshee.DoubanFM
         public void ChangeChannel(DoubanFMChannel channel) {
             int newChannel = int.Parse(channel.id);
             if (fm.channel == newChannel) {
-                // no need to change
+                if (!ServiceManager.PlayerEngine.IsPlaying())
+                    Next(true, true);
                 return;
             }
             fm.channel = newChannel;
