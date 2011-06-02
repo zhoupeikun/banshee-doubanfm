@@ -66,7 +66,7 @@ namespace Banshee.DoubanFM
             });
 
             this["DoubanFMFavAction"].IconName = "face-smile";
-            this["DoubanFMUnfavAction"].IconName = "face-smile";
+            this["DoubanFMUnfavAction"].IconName = "face-plain";
             this["DoubanFMHateAction"].IconName = "face-sad";
 
             this["DoubanFMFavAction"].IsImportant = true;
@@ -117,7 +117,7 @@ namespace Banshee.DoubanFM
             DoubanFMSong song = ServiceManager.PlayerEngine.CurrentTrack as DoubanFMSong;
             if (song == null)
                 return;
-            fmSource.fm.playList = fmSource.fm.FavSong(song.sid, song.aid);
+            fmSource.fm.playList = fmSource.fm.FavSong(song);
             song.like = true;
             UpdateActions();
         }
@@ -128,7 +128,7 @@ namespace Banshee.DoubanFM
             DoubanFMSong song = ServiceManager.PlayerEngine.CurrentTrack as DoubanFMSong;
             if (song == null)
                 return;
-            fmSource.fm.playList = fmSource.fm.UnfavSong(song.sid, song.aid);
+            fmSource.fm.playList = fmSource.fm.UnfavSong(song);
             song.like = false;
             UpdateActions();
         }

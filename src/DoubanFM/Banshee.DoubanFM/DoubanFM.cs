@@ -72,7 +72,7 @@ namespace Banshee.DoubanFM
     /// <summary>
     /// Douban FM service.
     /// </summary>
-    public class DoubanFM : IDoubanFMPlayQueue
+    public class DoubanFM : IDoubanFMPlayQueue, IDisposable
     {
         // User ID
         public string uid {
@@ -103,6 +103,7 @@ namespace Banshee.DoubanFM
         private CookieContainer cookieJar;
         private DoubanFMSourceContents contents;
 
+        private List<DoubanFMSong> history;
 
         delegate void InitializeHandler ();
 
@@ -117,12 +118,12 @@ namespace Banshee.DoubanFM
             this.password = password;
             this.contents = contents;
             playList = new List<DoubanFMSong>();
+            history = new List<DoubanFMSong>();
 
             InitializeHandler asyncInitializeHandler = Initialize;
             asyncInitializeHandler.BeginInvoke(IntializeCallback, null);
 
             // connect events
-//            TrackInfo.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
             ConnectPlaybackFinished();
         }
 
@@ -136,11 +137,11 @@ namespace Banshee.DoubanFM
         }
 
         public void ConnectPlaybackFinished() {
-            TrackInfo.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
+            DoubanFMSong.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
         }
 
         public void DisconnectPlaybackFinished() {
-            TrackInfo.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
+            DoubanFMSong.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
         }
 
         /// <summary>
@@ -205,7 +206,7 @@ namespace Banshee.DoubanFM
             CookieCollection cookies = response.Cookies;
             try {
                 this.dbcl2 = cookies["dbcl2"].Value.ToString();
-                Hyena.Log.Information("dbcl2: " + dbcl2);
+                Hyena.Log.Debug("dbcl2: " + dbcl2);
             }
             catch (KeyNotFoundException e) {
                 Hyena.Log.Exception(e);
@@ -213,18 +214,16 @@ namespace Banshee.DoubanFM
             }
             // Set User ID
             this.uid = this.dbcl2.Split(new char[] {':'})[0];
-            Hyena.Log.Information("UID: " + uid);
+            Hyena.Log.Debug("UID: " + uid);
             // Set cookies for douban.fm
-            Hyena.Log.Information("Got cookies for www.douban.com: " + cookieJar.GetCookieHeader(new Uri("http://www.douban.com/")));
-//            cookieJar.SetCookies(new Uri("http://douban.fm/"), cookieJar.GetCookieHeader(new Uri("http://www.douban.com/")));
-//            cookieJar.Add(new Uri("http://douban.fm/"), cookieJar.GetCookies(new Uri("http://www.douban.com/")));
+            Hyena.Log.Debug("Got cookies for www.douban.com: " + cookieJar.GetCookieHeader(new Uri("http://www.douban.com/")));
             foreach (Cookie cookie in cookieJar.GetCookies(new Uri("http://www.douban.com/"))) {
-                Hyena.Log.Information(cookie.ToString());
+                Hyena.Log.Debug(cookie.ToString());
                 // we need to change the cookie domain for Add to work
                 cookie.Domain = "douban.fm";
                 cookieJar.Add(new Uri("http://douban.fm/"), cookie);
             }
-            Hyena.Log.Information("Set cookies for douban.fm: " + cookieJar.GetCookieHeader(new Uri("http://douban.fm/")));
+            Hyena.Log.Debug("Set cookies for douban.fm: " + cookieJar.GetCookieHeader(new Uri("http://douban.fm/")));
             // Clean up the streams.
             response.Close ();
         }
@@ -242,7 +241,7 @@ namespace Banshee.DoubanFM
 
             try {
                 bid = response.Cookies["bid"].Value.ToString();
-                Hyena.Log.Information("Bid: " + bid);
+                Hyena.Log.Debug("Bid: " + bid);
             }
             catch (Exception e) {
                 Hyena.Log.Exception(e);
@@ -284,22 +283,39 @@ namespace Banshee.DoubanFM
         /// Refresh channels display in content window
         /// </summary>
         protected void RefreshChannels () {
-            Hyena.Log.Information("RefreshChannels");
+            Hyena.Log.Debug("RefreshChannels");
             contents.UpdateChannels(Channels);
         }
 
-        protected string FormatList<T>(List<T> sidlist, string verb) {
-            if (sidlist.Count == 0) {
-                // List is empty
+        private string GetHistoryVerb(DoubanFMSong song) {
+            if (song.status == DoubanFMSongStatus.Finished)
+                return "p";
+            else if (song.status == DoubanFMSongStatus.Skipped)
+                return "s";
+            else
                 return "";
-            } else {
-                T[] sidarray = sidlist.ToArray();
-                return string.Join("", sidarray.Select(s => "|" + s.ToString() + ":" + verb).ToArray());
-            }
         }
 
-        protected string FormatList<T>(List<T> sidlist) {
-            return FormatList(sidlist, "");
+//        protected string FormatList<T>(List<T> sidlist, string verb) {
+//            if (sidlist.Count == 0) {
+//                // List is empty
+//                return "";
+//            } else {
+//                T[] sidarray = sidlist.ToArray();
+//                return string.Join("", sidarray.Select(s => "|" + s.ToString() + ":" + verb).ToArray());
+//            }
+//        }
+//
+//        protected string FormatList<T>(List<T> sidlist) {
+//            return FormatList(sidlist, "");
+//        }
+
+        private string FormatHistoryList(int size) {
+            var h = GetRecentItems(size);
+            if (h == null || h.Count == 0)
+                return "";
+//            DoubanFMSong historyArray = h.ToArray();
+            return string.Join("", h.Select(s => "|" + s.sid + ":" + GetHistoryVerb(s)).ToArray());
         }
 
 
@@ -344,15 +360,15 @@ namespace Banshee.DoubanFM
                 request.Method = "GET";
                 request.CookieContainer = cookieJar;
 
-                Hyena.Log.Information("Requesting data from " + uri);
-                Hyena.Log.Information(cookieJar.GetCookieHeader(new Uri(uri)));
+                Hyena.Log.Debug("Requesting data from " + uri);
+                Hyena.Log.Debug(cookieJar.GetCookieHeader(new Uri(uri)));
                 // Get the response.
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
                 StreamReader reader = new StreamReader (response.GetResponseStream ());
                 // Read the content.
                 responseFromServer = reader.ReadToEnd ();
     
-                Hyena.Log.Information("Response: " + responseFromServer);
+                Hyena.Log.Debug("Response: " + responseFromServer);
             }
             catch (WebException e) {
                 Hyena.Log.Exception(e);
@@ -364,8 +380,6 @@ namespace Banshee.DoubanFM
         public List<DoubanFMSong> JsonToDoubanFMSongs(string json) {
             Deserializer deserializer = new Deserializer(json);
             JsonObject obj = (JsonObject)deserializer.Deserialize();
-            // Information
-//            Hyena.Log.Information("Got songs: " + obj.ToString());
             JsonArray song = (JsonArray)obj["song"];
 
             return song.Select(s => new DoubanFMSong((JsonObject)s)).ToList();
@@ -377,6 +391,20 @@ namespace Banshee.DoubanFM
         public void ResetPlaylist() {
             playList = NewPlaylist();
             playing = -1;
+        }
+
+        /// <summary>
+        /// Get recently played songs.
+        /// </summary>
+        /// <param name="size">
+        /// the number of songs to return at most
+        /// </param>
+        public List<DoubanFMSong> GetRecentItems (int size) {
+            if (history == null || history.Count == 0)
+                return null;
+            if (history.Count < size)
+                size = history.Count;
+            return history.GetRange(history.Count - size, size);
         }
 
         #region IDoubanFMPlayQueue implementation
@@ -410,31 +438,16 @@ namespace Banshee.DoubanFM
 
         #endregion
 
-//        public DoubanFMSong Previous { get; set; }
-
         #region IO With douban.fm
-
-
-        /// <summary>
-        /// Retrieve a new playlist
-        /// </summary>
-        /// <param name="history">
-        /// history song IDs
-        /// </param>
-        /// </summary>
-        public List<DoubanFMSong> NewPlaylist(List<int> history) {
-            var _params = GetDefaultParams("n");
-            _params["h"] = FormatList(history, "True");
-            string results = RemoteFM(_params);
-
-            return JsonToDoubanFMSongs(results);
-        }
-
         /// <summary>
         /// Retrieve a new playlist
         /// </summary>
         public List<DoubanFMSong> NewPlaylist() {
-            return NewPlaylist(new List<int>());
+            var _params = GetDefaultParams("n");
+            _params["h"] = FormatHistoryList(10);
+            string results = RemoteFM(_params);
+
+            return JsonToDoubanFMSongs(results);
         }
 
         /// <summary>
@@ -453,7 +466,7 @@ namespace Banshee.DoubanFM
             var _params = GetDefaultParams("b");
             _params["sid"] = sid;
             _params["aid"] = aid;
-            _params["rest"] = FormatList<string>(rest);
+//            _params["rest"] = FormatList<string>(rest);
 
             string results = RemoteFM(_params);
 
@@ -464,20 +477,21 @@ namespace Banshee.DoubanFM
             return BanSong(sid, aid, Enumerable.Empty<string>().ToList());
         }
 
-        public List<DoubanFMSong> FavSong(string sid, string aid) {
+        public List<DoubanFMSong> FavSong(DoubanFMSong song) {
             var _params = GetDefaultParams("r");
-            _params["sid"] = sid;
-//            _params["aid"] = aid;
+            _params["sid"] = song.sid;
+            _params["h"] = FormatHistoryList(10) + "|" + song.sid + ":" + "r";
 
             string results = RemoteFM(_params);
 
             return JsonToDoubanFMSongs(results);
         }
 
-        public List<DoubanFMSong> UnfavSong(string sid, string aid) {
+        public List<DoubanFMSong> UnfavSong(DoubanFMSong song) {
             var _params = GetDefaultParams("u");
-            _params["sid"] = sid;
-            _params["aid"] = aid;
+            _params["sid"] = song.sid;
+//            _params["aid"] = song.aid;
+            _params["h"] = FormatHistoryList(10) + "|" + song.sid + ":" + "u";
 
             string results = RemoteFM(_params);
 
@@ -485,18 +499,21 @@ namespace Banshee.DoubanFM
         }
 
         void HandleDoubanFMSongPlaybackFinished (TrackInfo track, double percentCompleted) {
+            Hyena.Log.Debug("HandleDoubanFMSongPlaybackFinished: percentCompleted=" + percentCompleted.ToString());
             if (track == null)
                 return;
 
             var song = track as DoubanFMSong;
-            Hyena.Log.Information("HandleDoubanFMSongPlaybackFinished: percentCompleted=" + percentCompleted.ToString());
-//            if ((percentCompleted > 0.9) && (track.PlayCount > 0)) {
-            if (percentCompleted > 0.9) {
-                Hyena.Log.Information("Finished playing a song: " + song.TrackTitle);
-                PlayedSong(song.sid, song.aid);
+
+            if (percentCompleted > 0.95) {
+                Hyena.Log.Debug("Finished playing a song: " + song.TrackTitle);
+                song.commited = true;
+                PlayedSong(song);
+
             } else {
-                Hyena.Log.Information("Skipped a song: " + song.TrackTitle);
-                 SkipSong(song.sid, song.aid);
+                Hyena.Log.Debug("Skipped a song: " + song.TrackTitle);
+                song.commited = true;
+                SkipSong(song);
             }
         }
 
@@ -506,17 +523,25 @@ namespace Banshee.DoubanFM
         /// <param name="du">
         /// time your have been idle
         /// </param>
-        public void PlayedSong(string sid, string aid, int du) {
+        public void PlayedSong(DoubanFMSong song, int du) {
             var _params = GetDefaultParams("e");
-            _params["sid"] = sid;
-            _params["aid"] = aid;
+            _params["sid"] = song.sid;
+            _params["aid"] = song.aid;
             _params["du"] = du.ToString();
 
-            RemoteFM(_params);
+            ThreadAssist.Spawn (delegate {
+                try {
+                    RemoteFM(_params);
+                } catch (System.Net.WebException e) {
+                    Hyena.Log.Warning ("Got Exception Trying to PlayedSong", e.ToString (), false);
+                }
+            });
+            song.status = DoubanFMSongStatus.Finished;
+            history.Add(song);
         }
 
-        public void PlayedSong(string sid, string aid) {
-            PlayedSong(sid, aid, 0);
+        public void PlayedSong(DoubanFMSong song) {
+            PlayedSong(song, 0);
         }
 
         /// <summary>
@@ -525,17 +550,25 @@ namespace Banshee.DoubanFM
         /// <param name="history">
         /// playlist history <see cref="List<DoubanFMSong>"/>
         /// </param>
-        public void SkipSong(string sid, string aid, List<DoubanFMSong> history) {
+        public void SkipSong(DoubanFMSong song, List<DoubanFMSong> history) {
             var _params = GetDefaultParams("s");
-            _params["sid"] = sid;
-            _params["aid"] = aid;
-//            _params["h"] = FormatList<string>(history.GetRange(history.Count-50-1, 50).Select(s => s.sid).ToList());
+            _params["sid"] = song.sid;
+            _params["aid"] = song.aid;
+            _params["h"] = FormatHistoryList(10) + "|" + song.sid + ":" + "s";
 
-            RemoteFM(_params);
+            ThreadAssist.Spawn (delegate {
+                try {
+                    RemoteFM(_params);
+                } catch (System.Net.WebException e) {
+                    Hyena.Log.Warning ("Got Exception Trying to SkipSong", e.ToString (), false);
+                }
+            });
+            song.status = DoubanFMSongStatus.Skipped;
+            history.Add(song);
         }
 
-        public void SkipSong(string sid, string aid) {
-            SkipSong(sid, aid, Enumerable.Empty<DoubanFMSong>().ToList());
+        public void SkipSong(DoubanFMSong song) {
+            SkipSong(song, Enumerable.Empty<DoubanFMSong>().ToList());
         }
 
         /// <summary>
@@ -546,7 +579,7 @@ namespace Banshee.DoubanFM
         /// </param>
         public List<DoubanFMSong> PlayedList(List<int> history) {
             var _params = GetDefaultParams("p");
-            _params["h"] = FormatList(history.GetRange(history.Count-50-1, 50));
+            _params["h"] = FormatHistoryList(10);
 
             string results = RemoteFM(_params);
 
@@ -554,5 +587,9 @@ namespace Banshee.DoubanFM
         }
 
         #endregion
+
+        public void Dispose() {
+            DisconnectPlaybackFinished();
+        }
     }
 }

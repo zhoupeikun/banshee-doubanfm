@@ -7,6 +7,7 @@ SOURCES =  \
 	Banshee.DoubanFM/DoubanFMActions.cs \
 	Banshee.DoubanFM/DoubanFMBrowser.cs \
 	Banshee.DoubanFM/DoubanFMChannel.cs \
+	Banshee.DoubanFM/DoubanFMCoverFetchJob.cs \
 	Banshee.DoubanFM/DoubanFMSong.cs \
 	Banshee.DoubanFM/DoubanFMSource.cs \
 	Banshee.DoubanFM/DoubanFMSourceContents.cs \

@@ -70,7 +70,7 @@ namespace Banshee.DoubanFM
 
         public void SetList (Dictionary<string, DoubanFMChannel> channels)
         {
-            Hyena.Log.Debug("Number of channels: " + channels.Count.ToString());
+//            Hyena.Log.Debug("Number of channels: " + channels.Count.ToString());
 
             if (channels.Count == 0) {
                 tile_view.ClearWidgets ();

@@ -28,6 +28,12 @@ using Hyena.Json;
 
 namespace Banshee.DoubanFM
 {
+    public enum DoubanFMSongStatus {
+        Unfinished,
+        Finished,
+        Skipped
+    }
+
     public class DoubanFMSong : TrackInfo
     {
         public override string TrackTitle { get; set; }
@@ -40,7 +46,8 @@ namespace Banshee.DoubanFM
         public string picture;
         public override TimeSpan Duration { get; set; }
         public bool like { get; set; }
-        public bool finished { get; set; }
+        public bool commited { get; set; }
+        public DoubanFMSongStatus status {get; set;}
 
         public override SafeUri Uri {
             get;
@@ -68,7 +75,7 @@ namespace Banshee.DoubanFM
                 Duration = new TimeSpan(0, 0, Lookup<int>(o, "length", 0));
                 this.Uri = new SafeUri((string)o["url"]);
 
-                finished = false;
+                status = DoubanFMSongStatus.Unfinished;
                 MediaAttributes = TrackMediaAttributes.AudioStream | TrackMediaAttributes.Music;
                 CanSaveToDatabase = false;
             }
@@ -81,7 +88,7 @@ namespace Banshee.DoubanFM
         public override void OnPlaybackFinished (double percentCompleted)
         {
             base.OnPlaybackFinished (percentCompleted);
-            Hyena.Log.Information("OnPlaybackFinished: " + TrackTitle);
+            Hyena.Log.Debug("OnPlaybackFinished: " + TrackTitle);
         }
     }
 }

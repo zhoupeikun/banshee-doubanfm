@@ -107,6 +107,7 @@
     <Compile Include="Banshee.DoubanFM\DoubanFMBrowser.cs" />
     <Compile Include="Banshee.DoubanFM\IDoubanFMPlayQueue.cs" />
     <Compile Include="Banshee.DoubanFM\DoubanFMActions.cs" />
+    <Compile Include="Banshee.DoubanFM\DoubanFMCoverFetchJob.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

@@ -30,6 +30,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Threading;
 
 using Mono.Addins;
 using Mono.Unix;
@@ -71,6 +72,8 @@ namespace Banshee.DoubanFM
             get;
             private set;
         }
+//        private PlayerState state;
+//        private DoubanFMSong currentSong;
 
         // In the sources TreeView, sets the order value for this source, small on top
         const int sort_order = 190;
@@ -122,6 +125,7 @@ namespace Banshee.DoubanFM
                     ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
 //                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
 //                    ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
+//                       ServiceManager.PlayerEngine.ConnectEvent(StateChanged, PlayerEvent.StateChange);
                 }
                 catch (DoubanLoginException e) {
                     Hyena.Log.Error("Douban FM login error: " + e.Message);
@@ -170,6 +174,34 @@ namespace Banshee.DoubanFM
 //            fm.PlayedSong(fm.Current.sid, fm.Current.aid);
         }
 
+        private void StateChanged (PlayerEventArgs args) {
+//            PlayerState currentState = ServiceManager.PlayerEngine.CurrentState;
+//            var song = ServiceManager.PlayerEngine.CurrentTrack;
+//
+//            if (state == PlayerState.Loaded && currentState == PlayerState.Playing) {
+//                state = PlayerState.Playing;
+//                if (song is DoubanFMSong)
+//                    currentSong = song as DoubanFMSong;
+//            }
+//            else if (state == PlayerState.Playing && currentState == PlayerState.Idle) {
+//                // FIXME : temporary workaround for marking song as played problem when gapless playing is enabled
+//                if (currentSong != null) {
+////                    Hyena.Log.Debug(string.Format("{0}:{1}", ServiceManager.PlayerEngine.Position, ServiceManager.PlayerEngine.Length));
+////                    if (!currentSong.commited && ServiceManager.PlayerEngine.Position >= ServiceManager.PlayerEngine.Length - 1) {
+////                        currentSong.commited = true;
+////                        this.fm.PlayedSong(currentSong.sid, currentSong.aid);
+////                    }
+//                    ThreadAssist.Spawn( delegate {
+//                        var songToCommit = currentSong;
+//                        Thread.Sleep(57000);
+//                        if (!songToCommit.commited)
+//                            this.fm.PlayedSong(songToCommit.sid, songToCommit.aid);
+//                    });
+//                }
+//            }
+//            state = currentState;
+        }
+
         #region IBasicPlaybackController implementation
         public bool Next (bool restart, bool changeImmediately)
         {
@@ -181,10 +213,13 @@ namespace Banshee.DoubanFM
                 Hyena.Log.Information("Got null from PeekNext!");
                 return false;
             }
-            Hyena.Log.Information(song.ToString());
+            Hyena.Log.Debug(song.ToString());
             if (changeImmediately) {
                 ServiceManager.PlayerEngine.OpenPlay(song);
                 fm.Next();
+
+                // try download cover art
+                Banshee.Kernel.Scheduler.Schedule (new Banshee.DoubanFM.DoubanFMCoverFecthJob (song), Banshee.Kernel.JobPriority.Normal);
             }
             return true;
         }
