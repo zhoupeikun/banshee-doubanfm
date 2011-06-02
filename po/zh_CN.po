@@ -1,0 +1,88 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Chen Tao <pro711@gmail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: banshee-doubanfm\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-02 23:27+0800\n"
+"PO-Revision-Date: 2011-06-02 23:30+0800\n"
+"Last-Translator: Chen Tao <pro711@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:54
+msgid "Love Track"
+msgstr "喜欢"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:55
+msgid "Mark current track as loved"
+msgstr "标记当前歌曲为喜欢的"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:59
+msgid "Cancel Love Track"
+msgstr "取消喜欢"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:60
+msgid "Cancel marking track as loved"
+msgstr "取消标记当前歌曲为喜欢的"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:64
+msgid "Ban Track"
+msgstr "禁止"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:65
+msgid "Mark current track as banned"
+msgstr "标记当前歌曲为禁止播放"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:70
+msgid "View track info on Douban.com"
+msgstr "在豆瓣网上查看歌曲信息"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:85
+msgid "_DoubanFM"
+msgstr "豆瓣电台(_D)"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:86
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:89
+msgid "Configure DoubanFM"
+msgstr "配置豆瓣电台"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs:88
+msgid "_Configure"
+msgstr "配置(_C)"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMSourceContents.cs:83
+msgid "Channels"
+msgstr "频道"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMSource.cs:81
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMSource.cs:82
+msgid "DoubanFM"
+msgstr "豆瓣电台"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/Widgets.cs:78
+msgid "Loading channels"
+msgstr "载入频道"
+
+#: ../src/DoubanFM/Banshee.DoubanFM/Widgets.cs:79
+msgid "Please wait..."
+msgstr "请稍候…"
+
+#: ../src/DoubanFM/gtk-gui/Banshee.DoubanFM.Configuration.cs:28
+msgid "DoubanFM Configuration"
+msgstr "豆瓣电台设置"
+
+#: ../src/DoubanFM/gtk-gui/Banshee.DoubanFM.Configuration.cs:42
+msgid "Email"
+msgstr "电子邮件"
+
+#: ../src/DoubanFM/gtk-gui/Banshee.DoubanFM.Configuration.cs:69
+msgid "Password"
+msgstr "密码"
