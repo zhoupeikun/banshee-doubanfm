@@ -12,6 +12,7 @@
             <toolitem name="DoubanFMFav" action="DoubanFMFavAction"/>
             <toolitem name="DoubanFMUnfav" action="DoubanFMUnfavAction"/>
             <toolitem name="DoubanFMHate" action="DoubanFMHateAction"/>
+            <toolitem name="DoubanFMInfo" action="DoubanFMInfoAction"/>
         </placeholder>
     </toolbar>
 </ui>

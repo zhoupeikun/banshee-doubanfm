@@ -24,8 +24,8 @@
 //
 
 using System;
+using System.Diagnostics;
 using Gtk;
-
 using Mono.Unix;
 
 using Banshee.Collection;
@@ -62,16 +62,23 @@ namespace Banshee.DoubanFM
                 new ActionEntry (
                     "DoubanFMHateAction", null,
                     Catalog.GetString ("Ban Track"), null,
-                    Catalog.GetString ("Mark current track as banned"), OnHated)
+                    Catalog.GetString ("Mark current track as banned"), OnHated),
+
+                new ActionEntry (
+                    "DoubanFMInfoAction", null,
+                    null, null,
+                    Catalog.GetString ("View track info on Douban.com"), OnInfo)
             });
 
             this["DoubanFMFavAction"].IconName = "face-smile";
             this["DoubanFMUnfavAction"].IconName = "face-plain";
             this["DoubanFMHateAction"].IconName = "face-sad";
+            this["DoubanFMInfoAction"].IconName = "info";
 
             this["DoubanFMFavAction"].IsImportant = true;
             this["DoubanFMUnfavAction"].IsImportant = true;
             this["DoubanFMHateAction"].IsImportant = true;
+            this["DoubanFMInfoAction"].IsImportant = true;
 
             Add(new ActionEntry[] {
                 new ActionEntry ("DoubanFMAction", null,
@@ -144,6 +151,17 @@ namespace Banshee.DoubanFM
             ServiceManager.PlaybackController.Next ();
         }
 
+        private void OnInfo (object sender, EventArgs args)
+        {
+            Hyena.Log.Information("View track info.");
+            DoubanFMSong song = ServiceManager.PlayerEngine.CurrentTrack as DoubanFMSong;
+            if (song == null)
+                return;
+
+            // open album info page in browser
+            Process.Start (string.Format("http://music.douban.com/subject/{0}/", song.aid));
+        }
+
         #endregion
 
         private void OnPlayerEvent (PlayerEventArgs args)
@@ -170,6 +188,7 @@ namespace Banshee.DoubanFM
             this["DoubanFMUnfavAction"].Visible = (current_track is DoubanFMSong) && ((DoubanFMSong)current_track).like;
             // only personal channel has hate action
             this["DoubanFMHateAction"].Visible = (current_track is DoubanFMSong) && (fmSource.fm.channel == 0);
+            this["DoubanFMInfoAction"].Visible = (current_track is DoubanFMSong);
 
             updating = false;
         }
