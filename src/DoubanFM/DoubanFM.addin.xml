@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Addin 
     id="Banshee.DoubanFM"
-    version="0.1.2"
-    compatVersion="0.1.2"
+    version="0.2.0"
+    compatVersion="0.2.0"
     copyright="Copyright © 2011 Chen Tao. Licensed under the MIT X11 license."
     name="DoubanFM"
     category="Community Extensions"

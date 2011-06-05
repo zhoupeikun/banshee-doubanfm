@@ -138,10 +138,12 @@ namespace Banshee.DoubanFM
 
         public void ConnectPlaybackFinished() {
             DoubanFMSong.PlaybackFinished += HandleDoubanFMSongPlaybackFinished;
+//			DoubanFMSong.PlaybackFinishedEvent += HandleDoubanFMSongPlaybackFinished;
         }
 
         public void DisconnectPlaybackFinished() {
-            DoubanFMSong.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
+//            DoubanFMSong.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
+//			DoubanFMSong.PlaybackFinishedEvent -= HandleDoubanFMSongPlaybackFinished;
         }
 
         /// <summary>

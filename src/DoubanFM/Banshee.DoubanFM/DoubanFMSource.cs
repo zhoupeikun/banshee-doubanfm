@@ -96,6 +96,7 @@ namespace Banshee.DoubanFM
 
             trackListModel = new MemoryTrackListModel();
             ServiceManager.SourceManager.AddSource(this);
+			
         }
 
         public Dictionary<string, DoubanFMChannel> GetChannels ()
@@ -219,7 +220,7 @@ namespace Banshee.DoubanFM
                 fm.Next();
 
                 // try download cover art
-                Banshee.Kernel.Scheduler.Schedule (new Banshee.DoubanFM.DoubanFMCoverFecthJob (song), Banshee.Kernel.JobPriority.Normal);
+            	Banshee.Kernel.Scheduler.Schedule (new Banshee.DoubanFM.DoubanFMCoverFecthJob (song), Banshee.Kernel.JobPriority.Normal);
             }
             return true;
         }

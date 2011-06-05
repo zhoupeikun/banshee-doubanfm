@@ -49,6 +49,7 @@ namespace Banshee.DoubanFM
         public DoubanFMCoverFecthJob (DoubanFMSong song) : base ()
         {
             this.song = song;
+			Track = song;
         }
 
         public static string ArtworkIdFor (DoubanFMSong song)
@@ -86,6 +87,13 @@ namespace Banshee.DoubanFM
                     tag.Name = CommonTags.AlbumCoverId;
                     tag.Value = cover_art_id;
                     AddTag (tag);
+					StreamTagger.TrackInfoMerge((TrackInfo)song, tag);
+					// tell player engine that track info has updated
+					if ((TrackInfo)song == ServiceManager.PlayerEngine.CurrentTrack) {
+						ServiceManager.Get<Banshee.Collection.Gui.ArtworkManager> ().ClearCacheFor (song.ArtworkId);
+						ServiceManager.PlayerEngine.TrackInfoUpdated();
+					}
+					
                     return;
                 }
             } catch (Exception e) {

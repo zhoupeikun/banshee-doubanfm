@@ -84,10 +84,14 @@ namespace Banshee.DoubanFM
                 throw new DoubanInvalidDataException(e.Message);
             }
         }
+		
+//		public delegate void PlaybackFinishedHandler(DoubanFMSong song, double percentCompleted);
+//        public static event PlaybackFinishedHandler PlaybackFinishedEvent;
 
         public override void OnPlaybackFinished (double percentCompleted)
         {
             base.OnPlaybackFinished (percentCompleted);
+//			PlaybackFinishedEvent(this, percentCompleted);
             Hyena.Log.Debug("OnPlaybackFinished: " + TrackTitle);
         }
     }
