@@ -66,9 +66,9 @@ AM_CONDITIONAL(ENABLE_RELEASE, test "x$enable_release" = "xyes")
 ENABLE_RELEASE=$enable_release
 AC_SUBST(ENABLE_RELEASE)
 if test "x$enable_release" = "xyes"; then
-	GMCS_FLAGS="-define:RELEASE"
+	GMCS_FLAGS="-define:RELEASE -codepage:utf8"
 else
-	GMCS_FLAGS="-warnaserror"
+	GMCS_FLAGS="-warnaserror -codepage:utf8"
 fi
 AC_SUBST(GMCS_FLAGS)
 

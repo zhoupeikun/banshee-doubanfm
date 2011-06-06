@@ -1,4 +1,16 @@
-banshee-extension-doubanfm (0.2.0-1) unstable; urgency=low
+banshee-extension-doubanfm (0.2.0-3) natty; urgency=low
+
+  * Fix build error (again).
+
+ -- Chen Tao <pro711@gmail.com>  Tue, 6 Jul 2011 09:59:49 +0800
+
+banshee-extension-doubanfm (0.2.0-2) natty; urgency=low
+
+  * Fix build error.
+
+ -- Chen Tao <pro711@gmail.com>  Tue, 6 Jul 2011 09:59:49 +0800
+
+banshee-extension-doubanfm (0.2.0-1) natty; urgency=low
 
   * New upstream version
 
