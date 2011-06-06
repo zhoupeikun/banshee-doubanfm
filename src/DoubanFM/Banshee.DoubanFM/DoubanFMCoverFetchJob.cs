@@ -81,7 +81,11 @@ namespace Banshee.DoubanFM
 
             // Download cover from Douban
             try {
-                if (SaveHttpStreamCover (new Uri (song.picture), cover_art_id, null)) {
+                if (
+				    // first attempt - large album art
+				    SaveHttpStreamCover (new Uri (song.picture.Replace("/mpic/", "/lpic/")), cover_art_id, null) || 
+				    // second attempt - normal album art
+				    SaveHttpStreamCover (new Uri (song.picture), cover_art_id, null)) {
                     Log.Debug ("Downloaded cover art from Douban", cover_art_id);
                     StreamTag tag = new StreamTag ();
                     tag.Name = CommonTags.AlbumCoverId;
