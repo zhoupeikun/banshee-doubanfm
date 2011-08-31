@@ -159,6 +159,9 @@ namespace Banshee.DoubanFM
             return true;
         }
 
+		public delegate void LoginErrorHandler();
+		public event LoginErrorHandler LoginErrorEvent;
+		
         /// <summary>
         /// login douban, get session token
         /// </summary>
@@ -201,39 +204,50 @@ namespace Banshee.DoubanFM
             request.AllowAutoRedirect = false;
             // Set user-agent
             request.UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:2.0.1) Gecko/20100101 Firefox/4.0.1";
+			// Set timeout to 30 seconds
+			request.Timeout = 30000;
+			request.ReadWriteTimeout = 30000;
             // Get the request stream.
             Stream dataStream = request.GetRequestStream ();
             // Write the data to the request stream.
             dataStream.Write (byteArray, 0, byteArray.Length);
             // Close the Stream object.
             dataStream.Close ();
+			
             // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-
-            // Read cookies
-            CookieCollection cookies = response.Cookies;
-            try {
-                this.dbcl2 = cookies["dbcl2"].Value.ToString();
-                Hyena.Log.Debug("dbcl2: " + dbcl2);
-            }
-            catch (KeyNotFoundException e) {
-                Hyena.Log.Exception(e);
-                throw new DoubanLoginException();
-            }
-            // Set User ID
-            this.uid = this.dbcl2.Split(new char[] {':'})[0];
-            Hyena.Log.Debug("UID: " + uid);
-            // Set cookies for douban.fm
-            Hyena.Log.Debug("Got cookies for www.douban.com: " + cookieJar.GetCookieHeader(new Uri("http://www.douban.com/")));
-            foreach (Cookie cookie in cookieJar.GetCookies(new Uri("http://www.douban.com/"))) {
-                Hyena.Log.Debug(cookie.ToString());
-                // we need to change the cookie domain for Add to work
-                cookie.Domain = "douban.fm";
-                cookieJar.Add(new Uri("http://douban.fm/"), cookie);
-            }
-            Hyena.Log.Debug("Set cookies for douban.fm: " + cookieJar.GetCookieHeader(new Uri("http://douban.fm/")));
-            // Clean up the streams.
-            response.Close ();
+			try {
+				Hyena.Log.Debug("Logging in to Douban server");
+            	HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+				Hyena.Log.Debug("Parsing response from Douban server");
+	            // Read cookies
+	            CookieCollection cookies = response.Cookies;
+	            try {
+	                this.dbcl2 = cookies["dbcl2"].Value.ToString();
+	                Hyena.Log.Debug("dbcl2: " + dbcl2);
+	            }
+	            catch (KeyNotFoundException e) {
+	                Hyena.Log.Exception(e);
+	                throw new DoubanLoginException();
+	            }
+	            // Set User ID
+	            this.uid = this.dbcl2.Split(new char[] {':'})[0];
+	            Hyena.Log.Debug("UID: " + uid);
+	            // Set cookies for douban.fm
+	            Hyena.Log.Debug("Got cookies for www.douban.com: " + cookieJar.GetCookieHeader(new Uri("http://www.douban.com/")));
+	            foreach (Cookie cookie in cookieJar.GetCookies(new Uri("http://www.douban.com/"))) {
+	                Hyena.Log.Debug(cookie.ToString());
+	                // we need to change the cookie domain for Add to work
+	                cookie.Domain = "douban.fm";
+	                cookieJar.Add(new Uri("http://douban.fm/"), cookie);
+	            }
+	            Hyena.Log.Debug("Set cookies for douban.fm: " + cookieJar.GetCookieHeader(new Uri("http://douban.fm/")));
+	            // Clean up the streams.
+	            response.Close ();				
+			}
+			catch (WebException) {
+				Hyena.Log.Error("Got WebException when logging in to Douban server");
+				LoginErrorEvent();
+			}
         }
 
         protected string GetLoginInformation() {
@@ -282,10 +296,13 @@ namespace Banshee.DoubanFM
             InitializeHandler handler = (InitializeHandler)asyncResult.AsyncDelegate;
             handler.EndInvoke(result);
 
-			Initialized = true;
-            Gtk.Application.Invoke (delegate {
-                RefreshChannels();
-            });
+			if (uid != null) {
+				// Logged in successfully
+				Initialized = true;
+	            Gtk.Application.Invoke (delegate {
+	                RefreshChannels();
+	            });			
+			}
         }
 
         /// <summary>

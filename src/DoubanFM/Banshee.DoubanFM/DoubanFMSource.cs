@@ -113,24 +113,21 @@ namespace Banshee.DoubanFM
         {
             base.Activate();
             if (this.fm == null) {
-                try {
-                    contents = new DoubanFMSourceContents();
-                    Properties.Set<ISourceContents> ("Nereid.SourceContents", contents);
-                    Properties.Set<bool> ("Nereid.SourceContents.HeaderVisible", false);
-                    if (DoubanFMActions.UsernameSchema.Get().Length == 0 || DoubanFMActions.PasswordSchema.Get().Length == 0) {
-                        actions.OnConfigurePlugin(this, null);
-                    }
-                    this.fm = new DoubanFM(DoubanFMActions.UsernameSchema.Get(), DoubanFMActions.PasswordSchema.Get(), contents);
+                contents = new DoubanFMSourceContents();
+                Properties.Set<ISourceContents> ("Nereid.SourceContents", contents);
+                Properties.Set<bool> ("Nereid.SourceContents.HeaderVisible", false);
+                if (DoubanFMActions.UsernameSchema.Get().Length == 0 || DoubanFMActions.PasswordSchema.Get().Length == 0) {
+                    actions.OnConfigurePlugin(this, null);
+                }
+                this.fm = new DoubanFM(DoubanFMActions.UsernameSchema.Get(), DoubanFMActions.PasswordSchema.Get(), contents);
 
-                    ServiceManager.PlaybackController.NextSource = this;
-                    ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
+				this.fm.LoginErrorEvent += NotifyLoginError;
+				
+                ServiceManager.PlaybackController.NextSource = this;
+                ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
 //                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
 //                    ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
 //                       ServiceManager.PlayerEngine.ConnectEvent(StateChanged, PlayerEvent.StateChange);
-                }
-                catch (DoubanLoginException e) {
-                    Hyena.Log.Error("Douban FM login error: " + e.Message);
-                }
             }
         }
 
@@ -140,6 +137,11 @@ namespace Banshee.DoubanFM
                return;
             this.fm.DisconnectPlaybackFinished();
         }
+		
+		public void NotifyLoginError() {
+            Hyena.Log.Error("Douban FM login error");
+			SetStatus(Catalog.GetString("Douban FM login error. Please check Internet connection and your username and password."), true);
+		}
 
         public void ChangeChannel(DoubanFMChannel channel) {
             int newChannel = int.Parse(channel.id);
