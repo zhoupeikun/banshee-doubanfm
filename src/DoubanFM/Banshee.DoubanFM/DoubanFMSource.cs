@@ -206,7 +206,7 @@ namespace Banshee.DoubanFM
         #region IBasicPlaybackController implementation
         public bool Next (bool restart, bool changeImmediately)
         {
-            if (fm == null) {
+            if (fm == null || fm.Initialized == false) {
                 return false;
             }
             var song = fm.PeekNext();

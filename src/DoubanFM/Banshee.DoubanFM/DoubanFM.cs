@@ -96,6 +96,11 @@ namespace Banshee.DoubanFM
             get;
             private set;
         }
+		
+		public bool Initialized {
+			get;
+			private set;
+		}
 
         private string username;
         private string password;
@@ -120,8 +125,9 @@ namespace Banshee.DoubanFM
             playList = new List<DoubanFMSong>();
             history = new List<DoubanFMSong>();
 
+			Initialized = false;
             InitializeHandler asyncInitializeHandler = Initialize;
-            asyncInitializeHandler.BeginInvoke(IntializeCallback, null);
+            asyncInitializeHandler.BeginInvoke(InitializeCallback, null);
 
             // connect events
             ConnectPlaybackFinished();
@@ -271,11 +277,12 @@ namespace Banshee.DoubanFM
         }
 
 
-        protected void IntializeCallback(IAsyncResult result) {
+        protected void InitializeCallback(IAsyncResult result) {
             AsyncResult asyncResult = (AsyncResult)result;
             InitializeHandler handler = (InitializeHandler)asyncResult.AsyncDelegate;
             handler.EndInvoke(result);
 
+			Initialized = true;
             Gtk.Application.Invoke (delegate {
                 RefreshChannels();
             });

@@ -97,7 +97,7 @@ namespace Banshee.DoubanFM
             // event handlers
             channels.ChangeChannelEvent += fmSource.ChangeChannel;
 
-            if (fmSource.fm != null) {
+            if (fmSource.fm != null && fmSource.fm.Initialized == true) {
                 UpdateChannels(fmSource.fm.Channels);
             }
             else {
