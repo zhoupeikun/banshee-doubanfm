@@ -29,7 +29,7 @@ namespace Banshee.DoubanFM
 			// Internal child Banshee.DoubanFM.Configuration.VBox
 			global::Gtk.VBox w1 = this.VBox;
 			w1.Name = "ConfigurationDialog_VBox";
-			w1.BorderWidth = ((uint)(2));
+			w1.BorderWidth = ((uint)(10));
 			// Container child ConfigurationDialog_VBox.Gtk.Box+BoxChild
 			this.table1 = new global::Gtk.Table (((uint)(2)), ((uint)(2)), false);
 			this.table1.Name = "table1";
@@ -119,7 +119,7 @@ namespace Banshee.DoubanFM
 				this.Child.ShowAll ();
 			}
 			this.DefaultWidth = 309;
-			this.DefaultHeight = 163;
+			this.DefaultHeight = 153;
 			this.Show ();
 			this.buttonCancel.Pressed += new global::System.EventHandler (this.OnButtonCancelPressed);
 			this.buttonOk.Pressed += new global::System.EventHandler (this.OnButtonOkPressed);

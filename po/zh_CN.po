@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: banshee-doubanfm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-06 00:05+0800\n"
-"PO-Revision-Date: 2011-06-02 23:30+0800\n"
+"POT-Creation-Date: 2011-09-01 18:15+0800\n"
+"PO-Revision-Date: 2011-09-01 18:15+0800\n"
 "Last-Translator: Chen Tao <pro711@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: zh_CN\n"
@@ -67,6 +67,12 @@ msgstr "频道"
 msgid "DoubanFM"
 msgstr "豆瓣电台"
 
+#: ../src/DoubanFM/Banshee.DoubanFM/DoubanFMSource.cs:143
+msgid ""
+"Douban FM login error. Please check Internet connection and your username "
+"and password."
+msgstr "登录豆瓣电台失败。请检查网络连接以及用户名和密码设置。"
+
 #: ../src/DoubanFM/Banshee.DoubanFM/Widgets.cs:78
 msgid "Loading channels"
 msgstr "载入频道"
@@ -74,6 +80,10 @@ msgstr "载入频道"
 #: ../src/DoubanFM/Banshee.DoubanFM/Widgets.cs:79
 msgid "Please wait..."
 msgstr "请稍候…"
+
+#: ../src/DoubanFM/gtk-gui/Banshee.DoubanFM.Captcha.cs:19
+msgid "Please input verification code"
+msgstr "请输入验证码"
 
 #: ../src/DoubanFM/gtk-gui/Banshee.DoubanFM.Configuration.cs:26
 msgid "DoubanFM Configuration"

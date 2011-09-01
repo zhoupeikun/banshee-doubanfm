@@ -2,6 +2,7 @@ ASSEMBLY = Banshee.DoubanFM
 LINK = $(BANSHEE_LIBS)
 
 SOURCES =  \
+	Banshee.DoubanFM/Captcha.cs \
 	Banshee.DoubanFM/Configuration.cs \
 	Banshee.DoubanFM/DoubanFM.cs \
 	Banshee.DoubanFM/DoubanFMActions.cs \
@@ -14,6 +15,7 @@ SOURCES =  \
 	Banshee.DoubanFM/HTTPUtils.cs \
 	Banshee.DoubanFM/IDoubanFMPlayQueue.cs \
 	Banshee.DoubanFM/Widgets.cs \
+	gtk-gui/Banshee.DoubanFM.Captcha.cs \
 	gtk-gui/Banshee.DoubanFM.Configuration.cs \
 	gtk-gui/generated.cs
 

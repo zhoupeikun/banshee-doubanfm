@@ -28,6 +28,7 @@ using System.Net;
 using System.Net.Security;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Linq;
 using System.Web;
 using System.Security.Cryptography.X509Certificates;
@@ -69,6 +70,25 @@ namespace Banshee.DoubanFM
     {
     }
 
+    public class CaptchaException : Exception
+    {
+		public string CaptchaId {
+			get;
+			private set;
+		}
+		
+		public string CaptchaUri {
+			get {
+				return "https://www.douban.com/misc/captcha?id=" + CaptchaId + "&size=s";
+			}
+		}
+			
+		public CaptchaException(string captchaId) : base("Captcha required")
+		{
+			CaptchaId = captchaId;
+		}
+    }	
+	
     /// <summary>
     /// Douban FM service.
     /// </summary>
@@ -134,12 +154,13 @@ namespace Banshee.DoubanFM
         }
 
         public void Initialize() {
-            Thread loadChannelsThread = new Thread(new ThreadStart(LoadChannels));
-            loadChannelsThread.Start();
+//            Thread loadChannelsThread = new Thread(new ThreadStart(LoadChannels));
+//            loadChannelsThread.Start();
 
             Login(username, password);
+			LoadChannels();
 
-            loadChannelsThread.Join();
+//            loadChannelsThread.Join();
         }
 
         public void ConnectPlaybackFinished() {
@@ -166,6 +187,32 @@ namespace Banshee.DoubanFM
         /// login douban, get session token
         /// </summary>
         protected void Login (string username, string password) {
+			try {
+				AttemptLogin(username, password, null, null);
+			}
+			catch (CaptchaException e) {
+				Hyena.Log.Information("Caught captcha exception");
+				string captchaText = "";
+				byte[] captchaImage = GetCaptchaImage(e.CaptchaUri);
+				Gtk.Application.Invoke( delegate {
+					Captcha captcha = new Captcha(captchaImage);
+					captcha.Run();
+					captchaText = captcha.CaptchaText;
+					captcha.Destroy();
+				});
+				// wait for user to input captcha
+				while (captchaText == "")
+					Thread.Sleep(100);
+				// retry login
+				Hyena.Log.Information("Solved captcha: " + captchaText);
+				AttemptLogin(username, password, e.CaptchaId, captchaText);
+			}
+		}
+		
+		/// <summary>
+		/// try to login, throws exception if captcha is required
+		/// </summary>
+        protected void AttemptLogin (string username, string password, string captchaId, string captcha) {
             // get login information
             GetLoginInformation();
 
@@ -173,6 +220,11 @@ namespace Banshee.DoubanFM
             data["source"] = "simple";
             data["form_email"] = username;
             data["form_password"] = password;
+			
+			if (captcha != null) {
+				data["captcha-id"] = captchaId;
+				data["captcha-solution"] = captcha;
+			}
 
             // workaround for invalid certificate problem, override certificate validator
             ServicePointManager.ServerCertificateValidationCallback = Validator;
@@ -192,17 +244,13 @@ namespace Banshee.DoubanFM
             string postData = postDataBuilder.ToString();
 
             byte[] byteArray = Encoding.UTF8.GetBytes (postData);
-            // Set the ContentType property of the WebRequest.
             request.ContentType = "application/x-www-form-urlencoded";
-            // Set the ContentLength property of the WebRequest.
             request.ContentLength = byteArray.Length;
             // we need a CookieContainer, otherwise response.Cookies is empty
             request.CookieContainer = cookieJar;
             // Set cookies
             // request.CookieContainer.Add(new Cookie("bid", GetBid(), "https://www.douban.com/accounts/login", "www.douban.com"));
-            // No auto-redirect
             request.AllowAutoRedirect = false;
-            // Set user-agent
             request.UserAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:2.0.1) Gecko/20100101 Firefox/4.0.1";
 			// Set timeout to 30 seconds
 			request.Timeout = 30000;
@@ -219,6 +267,30 @@ namespace Banshee.DoubanFM
 				Hyena.Log.Debug("Logging in to Douban server");
             	HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
 				Hyena.Log.Debug("Parsing response from Douban server");
+				string location = response.Headers["Location"];
+				
+				if (location != null) {
+					// there is redirection
+					Hyena.Log.Debug("Redirected to " + response.Headers["Location"]);					
+					if (location.Contains("error=requirecaptcha")) {
+						response.Close();
+						// get redirection page manually due to redirection bug in Mono
+						request = (HttpWebRequest)WebRequest.Create (location);
+						request.Method = "GET";
+			            request.CookieContainer = cookieJar;
+	        			response = (HttpWebResponse)request.GetResponse ();
+						throw new CaptchaException(ParseCaptchaId(new StreamReader(response.GetResponseStream()).ReadToEnd()));
+					} else if (location.Contains("error=notmatch")) {
+						// username/password mismatch
+//						LoginErrorEvent();
+						throw new DoubanLoginException();
+					}
+				}
+				
+				string responseData = new StreamReader(response.GetResponseStream()).ReadToEnd();
+				Hyena.Log.Debug(response.ResponseUri.ToString());
+				Hyena.Log.Debug(responseData);
+				
 	            // Read cookies
 	            CookieCollection cookies = response.Cookies;
 	            try {
@@ -244,10 +316,44 @@ namespace Banshee.DoubanFM
 	            // Clean up the streams.
 	            response.Close ();				
 			}
-			catch (WebException) {
-				Hyena.Log.Error("Got WebException when logging in to Douban server");
+			catch (WebException e) {
+				Hyena.Log.Error("Got WebException when logging in to Douban server" + e.Status.ToString());
 				LoginErrorEvent();
 			}
+			catch (DoubanLoginException) {
+				Hyena.Log.Error("Got DoubanLoginException when logging in to Douban server");
+				LoginErrorEvent();
+			}			
+        }
+		
+		protected string ParseCaptchaId(string html) {
+			Regex captchaRegex = new Regex(@"https://www\.douban\.com/misc/captcha\?id=(?<id>\w+)");
+			Match m = captchaRegex.Match(html);
+			if (m.Success) {
+//				string id = m.Groups[0].Value;
+				string id = m.Result("${id}");
+				Hyena.Log.Debug("Got captcha: " + id);
+				return id;
+			} else {
+				Hyena.Log.Error("Captcha required but no image found");
+				LoginErrorEvent();
+				return null;
+			}
+		}
+
+		protected byte[] GetCaptchaImage(string uri) {
+			byte[] image;
+			Hyena.Log.Debug("Fetching captcha image: " + uri);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create (uri);
+            request.Method = "GET";
+            request.CookieContainer = cookieJar;
+            // Get the response.
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+			BinaryReader reader = new BinaryReader(response.GetResponseStream());
+			image = reader.ReadBytes(1024 * 1024);
+			Hyena.Log.Debug("Captcha image size: " + image.Length.ToString());
+			
+			return image;
         }
 
         protected string GetLoginInformation() {
@@ -272,6 +378,11 @@ namespace Banshee.DoubanFM
             response.Close ();
             return bid;
         }
+		
+		protected string InputCaptcha() {
+			return "";
+			
+		}
 
         public void LoadChannels () {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create ("http://www.douban.com/j/app/radio/channels");

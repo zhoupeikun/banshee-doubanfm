@@ -108,6 +108,8 @@
     <Compile Include="Banshee.DoubanFM\IDoubanFMPlayQueue.cs" />
     <Compile Include="Banshee.DoubanFM\DoubanFMActions.cs" />
     <Compile Include="Banshee.DoubanFM\DoubanFMCoverFetchJob.cs" />
+    <Compile Include="gtk-gui\Banshee.DoubanFM.Captcha.cs" />
+    <Compile Include="Banshee.DoubanFM\Captcha.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

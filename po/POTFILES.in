@@ -7,4 +7,5 @@ src/DoubanFM/Banshee.DoubanFM/DoubanFMActions.cs
 src/DoubanFM/Banshee.DoubanFM/DoubanFMSourceContents.cs
 src/DoubanFM/Banshee.DoubanFM/DoubanFMSource.cs
 src/DoubanFM/Banshee.DoubanFM/Widgets.cs
+src/DoubanFM/gtk-gui/Banshee.DoubanFM.Captcha.cs
 src/DoubanFM/gtk-gui/Banshee.DoubanFM.Configuration.cs
