@@ -35,6 +35,7 @@ namespace Banshee.DoubanFM
 			w2.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.captchatext = new global::Gtk.Entry ();
+			this.captchatext.WidthRequest = 100;
 			this.captchatext.CanFocus = true;
 			this.captchatext.Name = "captchatext";
 			this.captchatext.IsEditable = true;
@@ -43,6 +44,7 @@ namespace Banshee.DoubanFM
 			w1.Add (this.captchatext);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(w1[this.captchatext]));
 			w3.Position = 1;
+			w3.Expand = false;
 			w3.Fill = false;
 			w3.Padding = ((uint)(10));
 			// Internal child Banshee.DoubanFM.Captcha.ActionArea
@@ -67,7 +69,8 @@ namespace Banshee.DoubanFM
 				this.Child.ShowAll ();
 			}
 			this.DefaultWidth = 364;
-			this.DefaultHeight = 168;
+			this.DefaultHeight = 200;
+			this.buttonOk.HasDefault = true;
 			this.Show ();
 			this.buttonOk.Clicked += new global::System.EventHandler (this.OnButtonOkClicked);
 		}

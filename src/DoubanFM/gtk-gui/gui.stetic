@@ -146,6 +146,7 @@
           <widget class="Gtk.Button" id="buttonOk">
             <property name="MemberName" />
             <property name="CanDefault">True</property>
+            <property name="HasDefault">True</property>
             <property name="CanFocus">True</property>
             <property name="UseStock">True</property>
             <property name="Type">StockItem</property>
@@ -163,7 +164,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Dialog" id="Banshee.DoubanFM.Captcha" design-size="364 168">
+  <widget class="Gtk.Dialog" id="Banshee.DoubanFM.Captcha" design-size="364 200">
     <property name="MemberName" />
     <property name="CanFocus">True</property>
     <property name="Title" translatable="yes">Please input verification code</property>
@@ -198,7 +199,8 @@
           </widget>
           <packing>
             <property name="Position">1</property>
-            <property name="AutoSize">False</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
             <property name="Fill">False</property>
             <property name="Padding">10</property>
           </packing>
@@ -216,6 +218,7 @@
             <property name="MemberName" />
             <property name="Sensitive">False</property>
             <property name="CanDefault">True</property>
+            <property name="HasDefault">True</property>
             <property name="CanFocus">True</property>
             <property name="UseStock">True</property>
             <property name="Type">StockItem</property>
