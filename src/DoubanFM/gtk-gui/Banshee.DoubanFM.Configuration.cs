@@ -120,6 +120,7 @@ namespace Banshee.DoubanFM
 			}
 			this.DefaultWidth = 309;
 			this.DefaultHeight = 153;
+			this.buttonOk.HasDefault = true;
 			this.Show ();
 			this.buttonCancel.Pressed += new global::System.EventHandler (this.OnButtonCancelPressed);
 			this.buttonOk.Pressed += new global::System.EventHandler (this.OnButtonOkPressed);

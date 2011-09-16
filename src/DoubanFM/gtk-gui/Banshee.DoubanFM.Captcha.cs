@@ -35,7 +35,6 @@ namespace Banshee.DoubanFM
 			w2.Fill = false;
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
 			this.captchatext = new global::Gtk.Entry ();
-			this.captchatext.WidthRequest = 100;
 			this.captchatext.CanFocus = true;
 			this.captchatext.Name = "captchatext";
 			this.captchatext.IsEditable = true;
