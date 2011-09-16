@@ -96,7 +96,7 @@ namespace Banshee.DoubanFM
 
             trackListModel = new MemoryTrackListModel();
             ServiceManager.SourceManager.AddSource(this);
-			
+			ServiceManager.PlaybackController.SourceChanged += OnPlaybackSourceChanged;
         }
 
         public Dictionary<string, DoubanFMChannel> GetChannels ()
@@ -122,20 +122,12 @@ namespace Banshee.DoubanFM
                 this.fm = new DoubanFM(DoubanFMActions.UsernameSchema.Get(), DoubanFMActions.PasswordSchema.Get(), contents);
 
 				this.fm.LoginErrorEvent += NotifyLoginError;
-				
-                ServiceManager.PlaybackController.NextSource = this;
-                ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
-//                    ServiceManager.PlayerEngine.ConnectEvent(FinishSong, PlayerEvent.EndOfStream);
-//                    ServiceManager.PlayerEngine.ConnectEvent(StartSong, PlayerEvent.StartOfStream);
-//                       ServiceManager.PlayerEngine.ConnectEvent(StateChanged, PlayerEvent.StateChange);
             }
         }
 
         public override void Deactivate ()
         {
-            if (this.fm == null)
-               return;
-            this.fm.DisconnectPlaybackFinished();
+			return;
         }
 		
 		public void NotifyLoginError() {
@@ -144,14 +136,18 @@ namespace Banshee.DoubanFM
 		}
 
         public void ChangeChannel(DoubanFMChannel channel) {
-            int newChannel = int.Parse(channel.id);
+			// set Douban FM as next source
+			ServiceManager.PlaybackController.NextSource = this;
+			
+			int newChannel = int.Parse(channel.id);
             if (fm.channel == newChannel) {
-                if (!ServiceManager.PlayerEngine.IsPlaying())
+                if (!(ServiceManager.PlayerEngine.IsPlaying() && ServiceManager.PlaybackController.Source is DoubanFMSource))
                     Next(true, true);
                 return;
             }
             fm.channel = newChannel;
             fm.ResetPlaylist();
+
             // start playing new list
             Next(true, true);
         }
@@ -205,6 +201,20 @@ namespace Banshee.DoubanFM
 //            state = currentState;
         }
 
+        private void OnPlaybackSourceChanged (object o, EventArgs args)
+        {
+            bool is_doubanfm = ServiceManager.PlaybackController.Source is DoubanFMSource;
+            
+			if (is_doubanfm) {
+				ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
+				fm.ConnectPlaybackFinished();
+			} else {
+				ServiceManager.PlayerEngine.DisconnectEvent(Next);
+				if (fm != null)
+					fm.DisconnectPlaybackFinished();
+			}
+		}
+		
         #region IBasicPlaybackController implementation
         public bool Next (bool restart, bool changeImmediately)
         {
@@ -273,9 +283,9 @@ namespace Banshee.DoubanFM
 
         public void Dispose ()
         {
+			ServiceManager.PlaybackController.SourceChanged -= OnPlaybackSourceChanged;
             actions.Dispose();
             actions = null;
-            ServiceManager.PlayerEngine.DisconnectEvent(Next);
         }
 
 

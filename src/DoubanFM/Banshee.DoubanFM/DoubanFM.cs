@@ -148,9 +148,6 @@ namespace Banshee.DoubanFM
 			Initialized = false;
             InitializeHandler asyncInitializeHandler = Initialize;
             asyncInitializeHandler.BeginInvoke(InitializeCallback, null);
-
-            // connect events
-            ConnectPlaybackFinished();
         }
 
         public void Initialize() {
@@ -169,7 +166,7 @@ namespace Banshee.DoubanFM
         }
 
         public void DisconnectPlaybackFinished() {
-//            DoubanFMSong.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
+            DoubanFMSong.PlaybackFinished -= HandleDoubanFMSongPlaybackFinished;
 //			DoubanFMSong.PlaybackFinishedEvent -= HandleDoubanFMSongPlaybackFinished;
         }
 
