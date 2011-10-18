@@ -79,7 +79,7 @@ namespace Banshee.DoubanFM
 		
 		public string CaptchaUri {
 			get {
-				return "https://www.douban.com/misc/captcha?id=" + CaptchaId + "&size=s";
+				return "http://www.douban.com/misc/captcha?id=" + CaptchaId + "&size=s";
 			}
 		}
 			
@@ -189,6 +189,8 @@ namespace Banshee.DoubanFM
 			}
 			catch (CaptchaException e) {
 				Hyena.Log.Information("Caught captcha exception");
+				if (e.CaptchaId == null)
+					return;
 				string captchaText = "";
 				byte[] captchaImage = GetCaptchaImage(e.CaptchaUri);
 				Gtk.Application.Invoke( delegate {
@@ -324,7 +326,7 @@ namespace Banshee.DoubanFM
         }
 		
 		protected string ParseCaptchaId(string html) {
-			Regex captchaRegex = new Regex(@"https://www\.douban\.com/misc/captcha\?id=(?<id>\w+)");
+			Regex captchaRegex = new Regex(@"https?://www\.douban\.com/misc/captcha\?id=(?<id>\w+)");
 			Match m = captchaRegex.Match(html);
 			if (m.Success) {
 //				string id = m.Groups[0].Value;
