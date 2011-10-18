@@ -5,11 +5,9 @@ namespace Banshee.DoubanFM
 	public partial class Captcha
 	{
 		private global::Gtk.Image captchaimage;
-
 		private global::Gtk.Entry captchatext;
-
 		private global::Gtk.Button buttonOk;
-
+        
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
@@ -29,7 +27,7 @@ namespace Banshee.DoubanFM
 			this.captchaimage.Xpad = 10;
 			this.captchaimage.Ypad = 10;
 			w1.Add (this.captchaimage);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(w1[this.captchaimage]));
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(w1 [this.captchaimage]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
@@ -41,7 +39,7 @@ namespace Banshee.DoubanFM
 			this.captchatext.ActivatesDefault = true;
 			this.captchatext.InvisibleChar = '●';
 			w1.Add (this.captchatext);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(w1[this.captchatext]));
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(w1 [this.captchatext]));
 			w3.Position = 1;
 			w3.Expand = false;
 			w3.Fill = false;
@@ -61,7 +59,7 @@ namespace Banshee.DoubanFM
 			this.buttonOk.UseUnderline = true;
 			this.buttonOk.Label = "gtk-ok";
 			this.AddActionWidget (this.buttonOk, -5);
-			global::Gtk.ButtonBox.ButtonBoxChild w5 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w4[this.buttonOk]));
+			global::Gtk.ButtonBox.ButtonBoxChild w5 = ((global::Gtk.ButtonBox.ButtonBoxChild)(w4 [this.buttonOk]));
 			w5.Expand = false;
 			w5.Fill = false;
 			if ((this.Child != null)) {

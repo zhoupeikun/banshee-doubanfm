@@ -5,9 +5,6 @@
     <target-gtk-version>2.12</target-gtk-version>
   </configuration>
   <import>
-    <widget-library name="Banshee.ThickClient, Version=2.0.0.0, Culture=neutral" />
-    <widget-library name="Banshee.Widgets, Version=2.0.0.0, Culture=neutral" />
-    <widget-library name="Hyena.Gui, Version=2.0.0.0, Culture=neutral" />
     <widget-library name="../../../../bin/Banshee.DoubanFM.dll" internal="true" />
   </import>
   <widget class="Gtk.Dialog" id="Banshee.DoubanFM.Configuration" design-size="309 153">
