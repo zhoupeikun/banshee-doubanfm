@@ -341,16 +341,21 @@ namespace Banshee.DoubanFM
 		}
 
 		protected byte[] GetCaptchaImage(string uri) {
-			byte[] image;
+			byte[] image = null;
 			Hyena.Log.Debug("Fetching captcha image: " + uri);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create (uri);
             request.Method = "GET";
             request.CookieContainer = cookieJar;
-            // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-			BinaryReader reader = new BinaryReader(response.GetResponseStream());
-			image = reader.ReadBytes(1024 * 1024);
-			Hyena.Log.Debug("Captcha image size: " + image.Length.ToString());
+			try {
+	            // Get the response.
+	            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+				BinaryReader reader = new BinaryReader(response.GetResponseStream());
+				image = reader.ReadBytes(1024 * 1024);
+				Hyena.Log.Debug("Captcha image size: " + image.Length.ToString());
+			}
+            catch (WebException e) {
+                Hyena.Log.Exception(e);
+            }
 			
 			return image;
         }
@@ -364,17 +369,17 @@ namespace Banshee.DoubanFM
             // we need a CookieContainer, otherwise response.Cookies is empty
             request.CookieContainer = cookieJar;
             // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-
-            try {
+			try {
+            	HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
                 bid = response.Cookies["bid"].Value.ToString();
                 Hyena.Log.Debug("Bid: " + bid);
-            }
+            	response.Close ();
+			}
             catch (Exception e) {
                 Hyena.Log.Exception(e);
                 throw new DoubanLoginException();
             }
-            response.Close ();
+
             return bid;
         }
 		
@@ -388,16 +393,21 @@ namespace Banshee.DoubanFM
             request.Method = "GET";
             request.CookieContainer = cookieJar;
             // Get the response.
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-            // Deserialize the JSON
-            Deserializer deserializer = new Deserializer(responseString);
-            JsonObject obj = (JsonObject)deserializer.Deserialize();
-            JsonArray arr = (JsonArray)obj["channels"];
-            foreach (JsonObject c in arr) {
-                this.Channels.Add((string)c["name"], new DoubanFMChannel((string)c["name"], ((int)c["channel_id"]).ToString(), (string)c["name_en"]));
+			try {
+            	HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+	            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+	            // Deserialize the JSON
+	            Deserializer deserializer = new Deserializer(responseString);
+	            JsonObject obj = (JsonObject)deserializer.Deserialize();
+	            JsonArray arr = (JsonArray)obj["channels"];
+	            foreach (JsonObject c in arr) {
+	                this.Channels.Add((string)c["name"], new DoubanFMChannel((string)c["name"], ((int)c["channel_id"]).ToString(), (string)c["name_en"]));
+	            }
+	            Hyena.Log.Debug("Channels: " + string.Join(",", Channels.Keys.ToArray()));
+			}
+            catch (WebException e) {
+                Hyena.Log.Exception(e);
             }
-            Hyena.Log.Debug("Channels: " + string.Join(",", Channels.Keys.ToArray()));
         }
 
 
