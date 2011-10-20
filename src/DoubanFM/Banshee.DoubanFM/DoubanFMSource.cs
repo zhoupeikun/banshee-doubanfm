@@ -207,7 +207,8 @@ namespace Banshee.DoubanFM
             
 			if (is_doubanfm) {
 				ServiceManager.PlayerEngine.ConnectEvent(Next, PlayerEvent.RequestNextTrack);
-				fm.ConnectPlaybackFinished();
+				if (fm != null)
+					fm.ConnectPlaybackFinished();
 			} else {
 				ServiceManager.PlayerEngine.DisconnectEvent(Next);
 				if (fm != null)
