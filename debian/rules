@@ -8,12 +8,6 @@ BANSHEE_VERSION = $(shell pkg-config --modversion banshee-thickclient)
 # disable zeitgeistdataprovider and lirc due to dependencies missing
 override_dh_auto_configure:
 	dh_auto_configure -- \
-		#~ --enable-gnome \
-		#~ --enable-schemas-install \
-		#~ --enable-doubanfm \	
-		#~ --disable-shave \
-		#~ --enable-user-help \
-		MCS=/usr/bin/mono-csc
 
 override_dh_gencontrol:
 	for pkg in `sed -n 's/^Package: //p' debian/control`; do \
@@ -21,8 +15,7 @@ override_dh_gencontrol:
 	done
 	dh_gencontrol
 
-override_dh_makeclilibs:		# do nothing -- we do not want clilibs to come
-                                # from anything, and especially not clutterflow.
+override_dh_makeclilibs:
 
 %:
 	dh $@

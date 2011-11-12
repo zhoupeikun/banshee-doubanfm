@@ -1,5 +1,5 @@
 AC_PREREQ(2.52)
-AC_INIT([banshee-extension-doubanfm], 0.2.3, [http://code.google.com/p/banshee-doubanfm])
+AC_INIT([banshee-extension-doubanfm], 0.2.4, [http://code.google.com/p/banshee-doubanfm])
 
 AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar dist-zip foreign])
 AM_MAINTAINER_MODE([enable])

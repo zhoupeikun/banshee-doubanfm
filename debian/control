@@ -3,11 +3,13 @@ Section: sound
 Priority: optional
 Maintainer: Chen Tao <pro711@gmail.com>
 Build-Depends: debhelper (>= 7.0.50),
-               cli-common-dev (>= 0.5.7),
-               mono-devel (>= 2.4.2.3),
+               libgconf2-dev,
+               cli-common-dev (>= 0.7.0),
+               mono-devel (>= 2.4.0),
+               mono-gmcs (>= 2.4.0),
                autotools-dev,
                lsb-release,
-               banshee (>= 1.6.0),
+               banshee (>= 2.0.0),
                pkg-config,
                libglib2.0-dev,
                libgstreamer0.10-dev (>= 0.10.15),
@@ -20,12 +22,13 @@ Build-Depends: debhelper (>= 7.0.50),
                libndesk-dbus-glib1.0-cil-dev,
                libndesk-dbus1.0-cil-dev,
                libmono-addins-cil-dev,
+               gnome-doc-utils (>= 0.17.3)
 Standards-Version: 3.9.1
 
 Package: banshee-extension-doubanfm
 Enhances: banshee
 Architecture: all
-Depends: banshee (>= 1.6.0), libglib2.0-cil (>= 2.12.10), libgtk2.0-cil (>= 2.12.10), libmono-addins0.2-cil (>= 0.4), libmono-corlib2.0-cil (>= 2.6.3), libmono-posix2.0-cil (>= 2.4), libmono-system2.0-cil (>= 2.6.3), ${misc:Depends}
+Depends: banshee (>= 2.0.0), libglib2.0-cil (>= 2.12.10), libgtk2.0-cil (>= 2.12.10), libmono-addins0.2-cil (>= 0.4), libmono-corlib2.0-cil (>= 2.6.3), libmono-posix2.0-cil (>= 2.4), libmono-system2.0-cil (>= 2.6.3), ${misc:Depends}
 Description: DoubanFM extension for Banshee
  This package provides integration for Banshee with douban.fm, an online 
  radio station.

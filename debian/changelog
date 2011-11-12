@@ -1,3 +1,33 @@
+banshee-extension-doubanfm (0.2.4-1ubuntu1) natty; urgency=low
+
+  * Bug fix release. 
+
+ -- Chen Tao <pro711@gmail.com>  Tue, 01 Nov 2011 13:03:36 +0800
+
+banshee-extension-doubanfm (0.2.3-1ubuntu3) natty; urgency=low
+
+  * Fix crash during intialization.
+
+ -- Chen Tao <pro711@gmail.com>  Thu, 20 Oct 2011 15:28:19 +0800
+
+banshee-extension-doubanfm (0.2.3-1ubuntu2) natty; urgency=low
+
+  * Fix captcha error.
+
+ -- Chen Tao <pro711@gmail.com>  Tue, 18 Oct 2011 22:04:00 +0800
+
+banshee-extension-doubanfm (0.2.2-1ubuntu3) oneiric; urgency=low
+
+  * New upstream version.
+
+ -- Chen Tao <pro711@gmail.com>  Sun, 16 Oct 2011 10:16:58 +0800
+
+banshee-extension-doubanfm (0.2.2-1ubuntu2) natty; urgency=low
+
+  * New upstream version.
+
+ -- Chen Tao <pro711@gmail.com>  Mon, 12 Sep 2011 14:50:00 +0800
+
 banshee-extension-doubanfm (0.2.1-1) natty; urgency=low
 
   * New upstream version.

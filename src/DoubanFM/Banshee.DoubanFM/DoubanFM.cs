@@ -206,6 +206,9 @@ namespace Banshee.DoubanFM
 				Hyena.Log.Information("Solved captcha: " + captchaText);
 				AttemptLogin(username, password, e.CaptchaId, captchaText);
 			}
+			catch (DoubanLoginException) {
+				LoginErrorEvent();
+			}
 		}
 		
 		/// <summary>
