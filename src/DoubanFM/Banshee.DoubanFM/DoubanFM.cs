@@ -286,6 +286,12 @@ namespace Banshee.DoubanFM
 						// username/password mismatch
 //						LoginErrorEvent();
 						throw new DoubanLoginException();
+					} else if (location.Contains("error=notused")) {
+						// username does not exist
+						throw new DoubanLoginException();
+					} else if (location.Contains("error=")) {
+						// other errors
+						throw new DoubanLoginException();
 					}
 				}
 				
