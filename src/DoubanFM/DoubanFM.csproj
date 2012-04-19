@@ -16,6 +16,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <RootNamespace>Banshee.DoubanFM</RootNamespace>
     <AssemblyOriginatorKeyFile>.</AssemblyOriginatorKeyFile>
+    <ReleaseVersion>0.2</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,7 +27,6 @@
         <Command type="Execute" command="make run" workingdir="${SolutionDir}" />
       </CustomCommands>
     </CustomCommands>
-    <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Windows|AnyCPU' ">
@@ -34,7 +34,6 @@
     <DebugType>full</DebugType>
     <OutputPath>..\..\..\bin</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
-    <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
@@ -47,7 +46,6 @@
       <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="Mono.Cairo">
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Mono.Addins">
       <SpecificVersion>False</SpecificVersion>
@@ -56,6 +54,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Banshee.Core, Version=2.0.0.0, Culture=neutral">
       <Package>banshee-core</Package>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Banshee.Services, Version=2.0.0.0, Culture=neutral">
       <Package>banshee-services</Package>
@@ -115,6 +114,7 @@
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
+        <GtkDesignInfo gettextClass="Mono.Addins.AddinManager.CurrentLocalizer" />
         <MonoDevelop.Autotools.MakefileInfo IntegrationEnabled="true" RelativeMakefileName="Makefile.am">
           <BuildFilesVar Sync="true" Name="SOURCES" />
           <DeployFilesVar />
