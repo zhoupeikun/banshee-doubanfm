@@ -74,7 +74,7 @@ namespace Banshee.DoubanFM
                 try {
                    like = Lookup<string> (o, "like", "0") == "0" ? false : true;
                 } catch (Exception ex) {
-                    Hyena.Log.Exception(e);
+                    Hyena.Log.Exception(ex);
                    like = Lookup<int> (o, "like", 0) == 0 ? false : true;
                 }
                 Duration = new TimeSpan(0, 0, Lookup<int>(o, "length", 0));
