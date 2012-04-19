@@ -476,7 +476,7 @@ namespace Banshee.DoubanFM
 
         protected Dictionary<string,string> GetDefaultParams(string typeName) {
             var _params = new Dictionary<string, string> ();
-            string[] fields = {"aid", "channel", "du", "h", "r", "rest", "sid", "type", "uid"};
+            string[] fields = {"aid", "channel", "du", "h", "r", "rest", "sid", "type", "uid","from"};
             foreach (string s in fields) {
                 _params[s] = "";
             }
@@ -485,6 +485,7 @@ namespace Banshee.DoubanFM
             _params["r"] = rnd.NextDouble().ToString();
             _params["uid"] = this.uid;
             _params["channel"] = this.channel.ToString();
+            _params["from"]="banshee";
 
             if (typeName.Length > 0) {
                 _params["type"] = typeName;
