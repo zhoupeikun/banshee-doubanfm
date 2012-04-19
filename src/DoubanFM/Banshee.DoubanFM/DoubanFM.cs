@@ -107,7 +107,7 @@ namespace Banshee.DoubanFM
             get; set;
         }
 
-        public int channel {
+        public DoubanFMChannel channel {
             get { return _channel; }
             set { _channel = value; }
         }
@@ -124,7 +124,7 @@ namespace Banshee.DoubanFM
 
         private string username;
         private string password;
-        private int _channel;
+        private DoubanFMChannel _channel;
         private CookieContainer cookieJar;
         private DoubanFMSourceContents contents;
 
@@ -137,7 +137,7 @@ namespace Banshee.DoubanFM
             this.bid = null;
             this.dbcl2 = null;
             this.Channels = new Dictionary<string, DoubanFMChannel>();
-            this._channel = 0;
+            this._channel = DoubanFMChannel.PersonalChannel;
             this.cookieJar = new CookieContainer();
             this.username = username;
             this.password = password;
@@ -397,29 +397,30 @@ namespace Banshee.DoubanFM
 			
 		}
 
-        public void LoadChannels () {
+        public void LoadChannels ()
+        {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create ("http://www.douban.com/j/app/radio/channels");
             request.Method = "GET";
             request.CookieContainer = cookieJar;
             // Get the response.
-			try {
-            	HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
-	            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-	            // Deserialize the JSON
-	            Deserializer deserializer = new Deserializer(responseString);
-	            JsonObject obj = (JsonObject)deserializer.Deserialize();
-	            JsonArray arr = (JsonArray)obj["channels"];
-	            foreach (JsonObject c in arr) {
-	                this.Channels.Add((string)c["name"], new DoubanFMChannel((string)c["name"], ((int)c["channel_id"]).ToString(), (string)c["name_en"]));
-	            }
-               //Add InternalChannels (eg:RedHeartChannel)
-              foreach (DoubanFMChannel channel in DoubanFMChannel.InternalChannels) {
-                 this.Channels.Add (channel.name, channel);
-              }
-	            Hyena.Log.Debug("Channels: " + string.Join(",", Channels.Keys.ToArray()));
-			}
-            catch (WebException e) {
-                Hyena.Log.Exception(e);
+            try {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse ();
+                string responseString = new StreamReader (response.GetResponseStream ()).ReadToEnd ();
+                // Deserialize the JSON
+                /*Deserializer deserializer = new Deserializer (responseString);
+                                 JsonObject obj = (JsonObject)deserializer.Deserialize ();
+                                 JsonArray arr = (JsonArray)obj ["channels"];*/
+                IList<DoubanFMChannel > channel_list = DoubanFMChannel.FromJsonString (responseString);
+                foreach (DoubanFMChannel channel in channel_list) {
+                    this.Channels.Add (channel.name, channel);
+                }
+                //Add InternalChannels (eg:RedHeartChannel)
+                foreach (DoubanFMChannel channel in DoubanFMChannel.InternalChannels) {
+                    this.Channels.Add (channel.name, channel);
+                }
+                Hyena.Log.Debug ("Channels: " + string.Join (",", Channels.Keys.ToArray ()));
+            } catch (WebException e) {
+                Hyena.Log.Exception (e);
             }
         }
 
@@ -488,7 +489,7 @@ namespace Banshee.DoubanFM
             Random rnd = new Random();
             _params["r"] = rnd.NextDouble().ToString();
             _params["uid"] = this.uid;
-            _params["channel"] = this.channel.ToString();
+            _params ["channel"] = this.channel != null ? this.channel.id : DoubanFMChannel.PersonalChannelId;
             _params["from"]="banshee";
 
             if (typeName.Length > 0) {

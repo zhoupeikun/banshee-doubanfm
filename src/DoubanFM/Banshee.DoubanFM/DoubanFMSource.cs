@@ -134,14 +134,14 @@ namespace Banshee.DoubanFM
 			// set Douban FM as next source
 			ServiceManager.PlaybackController.NextSource = this;
 			
-			int newChannel = int.Parse(channel.id);
-            if (fm.channel == newChannel) {
+            if (fm.channel == channel) {
                 if (!(ServiceManager.PlayerEngine.IsPlaying() && ServiceManager.PlaybackController.Source is DoubanFMSource))
                     Next(true, true);
                 return;
             }
-            fm.channel = newChannel;
-            fm.ResetPlaylist();
+            Hyena.Log.Debug (string.Format ("Changing to {0}", channel));
+            fm.channel = channel;
+            fm.ResetPlaylist ();
 
             // start playing new list
             Next(true, true);

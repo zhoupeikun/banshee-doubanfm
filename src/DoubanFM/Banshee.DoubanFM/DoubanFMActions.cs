@@ -67,7 +67,11 @@ namespace Banshee.DoubanFM
                 new ActionEntry (
                     "DoubanFMInfoAction", null,
                     null, null,
-                    AddinManager.CurrentLocalizer.GetString ("View track info on Douban.com"), OnInfo)
+                    AddinManager.CurrentLocalizer.GetString ("View track info on Douban.com"), OnInfo),
+            /*new ActionEntry (
+                 "DoubanFMDownloadAction", null,
+                 null, null,
+                 Catalog.GetString ("Download this song from DoubanFM"), OnDownloadRequested)*/
             });
 
             this["DoubanFMFavAction"].IconName = "face-smile";
@@ -117,7 +121,12 @@ namespace Banshee.DoubanFM
             config.Run ();
             config.Destroy ();
         }
-
+        
+        private void OnDownloadRequested (object sender, EventArgs args)
+        {
+         //TODO download the song
+        }
+        
         private void OnLoved (object sender, EventArgs args)
         {
             Hyena.Log.Information("Loved a track.");
@@ -187,7 +196,8 @@ namespace Banshee.DoubanFM
             this["DoubanFMFavAction"].Visible = (current_track is DoubanFMSong) && !((DoubanFMSong)current_track).like;
             this["DoubanFMUnfavAction"].Visible = (current_track is DoubanFMSong) && ((DoubanFMSong)current_track).like;
             // only personal channel has hate action
-            this["DoubanFMHateAction"].Visible = (current_track is DoubanFMSong) && (fmSource.fm.channel == 0);
+            this ["DoubanFMHateAction"].Visible = (current_track is DoubanFMSong) && 
+             (fmSource.fm.channel == DoubanFMChannel.PersonalChannel);
             this["DoubanFMInfoAction"].Visible = (current_track is DoubanFMSong);
 
             updating = false;
