@@ -71,7 +71,11 @@ namespace Banshee.DoubanFM
                 aid = Lookup<string>(o, "aid", "");
                 ssid = Lookup<string>(o, "ssid", "");
                 picture = Lookup<string>(o, "picture", "");
-                like = Lookup<string>(o, "like", "0") == "0" ? false : true;
+                try {
+                   like = Lookup<string> (o, "like", "0") == "0" ? false : true;
+                } catch (Exception ex) {
+                   like = Lookup<int> (o, "like", 0) == 0 ? false : true;
+                }
                 Duration = new TimeSpan(0, 0, Lookup<int>(o, "length", 0));
                 this.Uri = new SafeUri((string)o["url"]);
 
