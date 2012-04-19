@@ -17,7 +17,7 @@ namespace Banshee.DoubanFM
 			global::Stetic.Gui.Initialize (this);
 			// Widget Banshee.DoubanFM.Configuration
 			this.Name = "Banshee.DoubanFM.Configuration";
-			this.Title = global::Mono.Unix.Catalog.GetString ("DoubanFM Configuration");
+			this.Title = global::Mono.Addins.AddinManager.CurrentLocalizer.GetString ("DoubanFM Configuration");
 			this.Icon = global::Stetic.IconLoader.LoadIcon (this, "gtk-preferences", global::Gtk.IconSize.Menu);
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			// Internal child Banshee.DoubanFM.Configuration.VBox
@@ -32,7 +32,7 @@ namespace Banshee.DoubanFM
 			// Container child table1.Gtk.Table+TableChild
 			this.label1 = new global::Gtk.Label ();
 			this.label1.Name = "label1";
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("Email");
+			this.label1.LabelProp = global::Mono.Addins.AddinManager.CurrentLocalizer.GetString ("Email");
 			this.table1.Add (this.label1);
 			global::Gtk.Table.TableChild w2 = ((global::Gtk.Table.TableChild)(this.table1 [this.label1]));
 			w2.XOptions = ((global::Gtk.AttachOptions)(4));
@@ -40,7 +40,7 @@ namespace Banshee.DoubanFM
 			// Container child table1.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label ();
 			this.label2.Name = "label2";
-			this.label2.LabelProp = global::Mono.Unix.Catalog.GetString ("Password");
+			this.label2.LabelProp = global::Mono.Addins.AddinManager.CurrentLocalizer.GetString ("Password");
 			this.table1.Add (this.label2);
 			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1 [this.label2]));
 			w3.TopAttach = ((uint)(1));

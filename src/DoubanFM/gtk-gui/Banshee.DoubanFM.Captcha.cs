@@ -14,7 +14,7 @@ namespace Banshee.DoubanFM
 			// Widget Banshee.DoubanFM.Captcha
 			this.CanFocus = true;
 			this.Name = "Banshee.DoubanFM.Captcha";
-			this.Title = global::Mono.Unix.Catalog.GetString ("Please input verification code");
+			this.Title = global::Mono.Addins.AddinManager.CurrentLocalizer.GetString ("Please input verification code");
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Modal = true;
 			// Internal child Banshee.DoubanFM.Captcha.VBox

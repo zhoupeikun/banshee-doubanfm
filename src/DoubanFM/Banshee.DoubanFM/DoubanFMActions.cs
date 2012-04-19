@@ -26,7 +26,7 @@
 using System;
 using System.Diagnostics;
 using Gtk;
-using Mono.Unix;
+using Mono.Addins;
 
 using Banshee.Collection;
 using Banshee.Gui;
@@ -51,23 +51,23 @@ namespace Banshee.DoubanFM
             Add (new ActionEntry [] {
                 new ActionEntry (
                     "DoubanFMFavAction", null,
-                    Catalog.GetString ("Love Track"), null,
-                    Catalog.GetString ("Mark current track as loved"), OnLoved),
+                    AddinManager.CurrentLocalizer.GetString ("Love Track"), null,
+                    AddinManager.CurrentLocalizer.GetString ("Mark current track as loved"), OnLoved),
 
                 new ActionEntry (
                     "DoubanFMUnfavAction", null,
-                    Catalog.GetString ("Cancel Love Track"), null,
-                    Catalog.GetString ("Cancel marking track as loved"), OnCancelLoved),
+                    AddinManager.CurrentLocalizer.GetString ("Cancel Love Track"), null,
+                    AddinManager.CurrentLocalizer.GetString ("Cancel marking track as loved"), OnCancelLoved),
 
                 new ActionEntry (
                     "DoubanFMHateAction", null,
-                    Catalog.GetString ("Ban Track"), null,
-                    Catalog.GetString ("Mark current track as banned"), OnHated),
+                    AddinManager.CurrentLocalizer.GetString ("Ban Track"), null,
+                    AddinManager.CurrentLocalizer.GetString ("Mark current track as banned"), OnHated),
 
                 new ActionEntry (
                     "DoubanFMInfoAction", null,
                     null, null,
-                    Catalog.GetString ("View track info on Douban.com"), OnInfo)
+                    AddinManager.CurrentLocalizer.GetString ("View track info on Douban.com"), OnInfo)
             });
 
             this["DoubanFMFavAction"].IconName = "face-smile";
@@ -82,11 +82,11 @@ namespace Banshee.DoubanFM
 
             Add(new ActionEntry[] {
                 new ActionEntry ("DoubanFMAction", null,
-                                 Catalog.GetString ("_DoubanFM"), null,
-                                 Catalog.GetString ("Configure DoubanFM"), null),
+                                 AddinManager.CurrentLocalizer.GetString ("_DoubanFM"), null,
+                                 AddinManager.CurrentLocalizer.GetString ("Configure DoubanFM"), null),
                 new ActionEntry ("DoubanFMConfigureAction", Stock.Properties,
-                                 Catalog.GetString ("_Configure"), null,
-                                 Catalog.GetString ("Configure DoubanFM"), OnConfigurePlugin)
+                                 AddinManager.CurrentLocalizer.GetString ("_Configure"), null,
+                                 AddinManager.CurrentLocalizer.GetString ("Configure DoubanFM"), OnConfigurePlugin)
             });
 
             actions_id = Actions.UIManager.AddUiFromResource ("UI.xml");

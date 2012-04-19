@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using Banshee.Sources;
 using Banshee.Sources.Gui;
 using Gtk;
-using Mono.Unix;
+using Mono.Addins;
 
 namespace Banshee.DoubanFM
 {
@@ -80,7 +80,7 @@ namespace Banshee.DoubanFM
 
             main_box.PackStart (logo, false, false, 0);
 
-            channels = new TitledList (Catalog.GetString("Channels"));
+            channels = new TitledList (AddinManager.CurrentLocalizer.GetString("Channels"));
             main_box.PackStart (channels, false, false, 0);
 
             AddWithFrame (viewport);
