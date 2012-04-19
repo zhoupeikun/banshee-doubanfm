@@ -412,6 +412,10 @@ namespace Banshee.DoubanFM
 	            foreach (JsonObject c in arr) {
 	                this.Channels.Add((string)c["name"], new DoubanFMChannel((string)c["name"], ((int)c["channel_id"]).ToString(), (string)c["name_en"]));
 	            }
+               //Add InternalChannels (eg:RedHeartChannel)
+              foreach (DoubanFMChannel channel in DoubanFMChannel.InternalChannels) {
+                 this.Channels.Add (channel.name, channel);
+              }
 	            Hyena.Log.Debug("Channels: " + string.Join(",", Channels.Keys.ToArray()));
 			}
             catch (WebException e) {
