@@ -21,10 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System.Collections.Generic;
+
 namespace Banshee.DoubanFM
 {
     public class DoubanFMChannel
     {
+    		private static IList<DoubanFMChannel> _InternalChannels = null;
+		
+        //Internal Channels
+        public static IList<DoubanFMChannel> InternalChannels {
+           get { 
+              if (_InternalChannels == null) {
+                 _InternalChannels = new List<DoubanFMChannel> ();
+                 _InternalChannels.Add (new DoubanFMChannel ("红心电台", "-3", "Red Heart"));
+              }
+              return _InternalChannels;
+           }
+        }
+      
         public string name {
             get; set;
         }
